@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yes Dice</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app" data-result="idle" data-view="dice">
+      <div class="dice-screen">
+        <section class="panel" aria-labelledby="app-title">
+          <div class="topbar" aria-label="页面切换">
+            <button class="tab-button is-active" id="showDiceButton" type="button">骰子</button>
+            <button class="tab-button" id="showHistoryButton" type="button">历史</button>
+          </div>
+
+          <div class="clock" aria-label="当前时间" hidden>
+            <span>当前时间</span>
+            <strong id="clockText">--</strong>
+          </div>
+
+          <div class="header">
+            <h1 id="app-title">宇宙神奇无敌牛逼骰</h1>
+          </div>
+
+          <label class="field">
+            <span>要决定的事情</span>
+            <input id="decisionInput" type="text" placeholder="例如：今晚要不要出门" maxlength="60" />
+          </label>
+
+          <div class="selector" aria-labelledby="selector-title">
+            <div class="selector-head">
+              <div>
+                <h2 id="selector-title">选择你想要的点数</h2>
+                <p class="selector-hint">连点同一骰面9次有惊喜。</p>
+              </div>
+              <button class="ghost-button" id="clearButton" type="button">清空</button>
+            </div>
+            <div class="number-grid" id="numberGrid" role="group" aria-label="骰子点数选择">
+              <button class="number-option" type="button" data-value="1" aria-pressed="false">
+                <span class="mini-die face-1"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span>1</span>
+              </button>
+              <button class="number-option" type="button" data-value="2" aria-pressed="false">
+                <span class="mini-die face-2"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span>2</span>
+              </button>
+              <button class="number-option" type="button" data-value="3" aria-pressed="false">
+                <span class="mini-die face-3"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span>3</span>
+              </button>
+              <button class="number-option" type="button" data-value="4" aria-pressed="false">
+                <span class="mini-die face-4"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span>4</span>
+              </button>
+              <button class="number-option" type="button" data-value="5" aria-pressed="false">
+                <span class="mini-die face-5"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span>5</span>
+              </button>
+              <button class="number-option" type="button" data-value="6" aria-pressed="false">
+                <span class="mini-die face-6"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span>6</span>
+              </button>
+            </div>
+          </div>
+
+          <button class="roll-button" id="rollButton" type="button">Go！Go！Go！</button>
+        </section>
+
+        <section class="stage" aria-live="polite">
+          <div class="result-word result-word-top" id="topWord"></div>
+          <div class="dice-wrap">
+            <div class="dice" id="dice" aria-label="骰子结果">
+              <span class="pip pip-1"></span>
+              <span class="pip pip-2"></span>
+              <span class="pip pip-3"></span>
+              <span class="pip pip-4"></span>
+              <span class="pip pip-5"></span>
+              <span class="pip pip-6"></span>
+              <span class="pip pip-7"></span>
+            </div>
+          </div>
+          <div class="result-word result-word-left" id="leftWord"></div>
+          <div class="result-word result-word-right" id="rightWord"></div>
+          <p class="status" id="statusText">先选几个点数，然后投掷。</p>
+        </section>
+      </div>
+
+      <section class="history-screen" aria-labelledby="history-title">
+        <div class="history-shell">
+          <div class="history-page-head">
+            <div>
+              <p class="eyebrow">Decision Review</p>
+              <h1 id="history-title">历史记录</h1>
+              <p class="history-time" id="historyClockText">--</p>
+            </div>
+            <div class="history-actions">
+              <button class="ghost-button" id="backToDiceButton" type="button">返回骰子</button>
+              <button class="ghost-button" id="clearHistoryButton" type="button">清除历史</button>
+            </div>
+          </div>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </section>
+
+      <div class="modal" id="clickModal" hidden>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="clickModalTitle">
+          <h2 id="clickModalTitle">别几把瞎点了，赶紧决定。</h2>
+          <button class="confirm-button" id="closeClickModalButton" type="button">好的好的</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
