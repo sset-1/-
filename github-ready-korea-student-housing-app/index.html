@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HanStay 留学生找房</title>
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <section class="role-gate" id="roleGate" aria-label="选择身份">
+      <div class="role-gate-content">
+        <div class="language-switch" aria-label="语言切换">
+          <button class="lang-button active" data-lang="zh" type="button">中文</button>
+          <button class="lang-button" data-lang="ko" type="button">한국어</button>
+        </div>
+        <p class="eyebrow">Korea Student Housing</p>
+        <h1>HanStay</h1>
+        <p class="gate-copy">远程可信看房平台。先选择你的身份，再进入对应工作台。</p>
+        <div class="role-choice-grid">
+          <button class="role-choice seeker" data-enter-role="seeker" type="button">
+            <i data-lucide="search"></i>
+            <strong>我是找房的</strong>
+            <span>筛选学校周边房源，提交视频看房需求，跟踪预约进度。</span>
+          </button>
+          <button class="role-choice agent" data-enter-role="agent" type="button">
+            <i data-lucide="video"></i>
+            <strong>我是看房的</strong>
+            <span>接收看房任务，安排视频连线，回填检查结果。</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="app-shell" id="appShell" hidden>
+      <aside class="sidebar" aria-label="应用导航">
+        <div class="brand">
+          <div class="brand-mark">H</div>
+          <div>
+            <p class="eyebrow">Korea Student Housing</p>
+            <h1>HanStay</h1>
+          </div>
+        </div>
+
+        <div class="language-switch sidebar-language" aria-label="语言切换">
+          <button class="lang-button active" data-lang="zh" type="button">中文</button>
+          <button class="lang-button" data-lang="ko" type="button">한국어</button>
+        </div>
+
+        <section class="filter-group auth-panel">
+          <div class="section-title">
+            <i data-lucide="user-round-check"></i>
+            <span>当前身份</span>
+          </div>
+          <div class="role-badge" id="roleBadge">找房人端</div>
+          <label class="field">
+            <span id="profileNameLabel">姓名</span>
+            <input id="profileName" placeholder="例如：李同学" />
+          </label>
+          <label class="field">
+            <span id="profileContactLabel">联系方式</span>
+            <input id="profileContact" placeholder="微信 / KakaoTalk / 邮箱" />
+          </label>
+          <button class="secondary-button full" id="saveProfile" type="button">
+            <i data-lucide="log-in"></i>
+            进入找房人端
+          </button>
+          <p class="profile-note" id="profileStatus">当前：找房人端</p>
+          <button class="secondary-button full subtle" id="switchRole" type="button">
+            <i data-lucide="arrow-left-right"></i>
+            返回身份选择
+          </button>
+        </section>
+
+        <section class="filter-group nav-panel">
+          <div class="section-title">
+            <i data-lucide="layout-dashboard"></i>
+            <span>功能区</span>
+          </div>
+          <nav class="workspace-nav" aria-label="功能导航">
+            <button class="nav-item active" data-view="listings" type="button">
+              <i data-lucide="building-2"></i>
+              <span>真实房源入口</span>
+            </button>
+            <button class="nav-item seeker-nav" data-view="bookings" type="button">
+              <i data-lucide="video"></i>
+              <span>预约中心</span>
+            </button>
+            <button class="nav-item agent-nav" data-view="bookings" type="button">
+              <i data-lucide="clipboard-list"></i>
+              <span>看房任务</span>
+            </button>
+            <button class="nav-item" data-view="maps" type="button">
+              <i data-lucide="map"></i>
+              <span>外部地图</span>
+            </button>
+            <button class="nav-item" data-view="guides" type="button">
+              <i data-lucide="book-open-check"></i>
+              <span>便利知识</span>
+            </button>
+          </nav>
+        </section>
+
+        <section class="filter-group compact">
+          <div class="section-title">
+            <i data-lucide="shield-check"></i>
+            <span>服务流程</span>
+          </div>
+          <ul class="checklist">
+            <li>找房人提交视频看房需求</li>
+            <li>看房人端接单并安排连线</li>
+            <li>顾问按检查表回填备注</li>
+            <li>找房人跟踪状态和视频链接</li>
+          </ul>
+        </section>
+      </aside>
+
+      <main class="main-view">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="workspaceEyebrow">Student Workspace</p>
+            <h2 id="workspaceTitle">找房人工作台</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="primary-button seeker-only" id="openBooking">
+              <i data-lucide="video"></i>
+              预约视频看房
+            </button>
+          </div>
+        </header>
+
+        <section class="summary-strip" aria-label="平台数据">
+          <article>
+            <span id="visibleCount">0</span>
+            <p>平台入口</p>
+          </article>
+          <article>
+            <span id="pendingCount">0</span>
+            <p>待接单预约</p>
+          </article>
+          <article>
+            <span id="confirmedCount">0</span>
+            <p>已安排视频</p>
+          </article>
+          <article>
+            <span id="completedCount">0</span>
+            <p>已完成看房</p>
+          </article>
+        </section>
+
+        <section class="view-section active" data-view-panel="listings">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Listings Workspace</p>
+              <h3>真实房源入口</h3>
+            </div>
+            <p>按学校、预算和房型生成 Naver 부동산 / 직방 实时检索入口；本页不复制平台房源数据。</p>
+          </div>
+
+          <section class="real-search-panel" aria-label="真实房源搜索">
+            <div class="section-head tight">
+              <div>
+                <p class="eyebrow">Live Search</p>
+                <h3>真实房源搜索</h3>
+              </div>
+              <span class="status-pill" id="realSearchStatus">等待输入</span>
+            </div>
+            <form class="real-search-form" id="realSearchForm">
+              <label class="field">
+                <span>区域选择</span>
+                <select id="realAreaSelect" name="areaSelect">
+                  <option value="">全部 / 自定义</option>
+                  <option value="延世大学 新村">延世大学 / 新村</option>
+                  <option value="高丽大学 安岩">高丽大学 / 安岩</option>
+                  <option value="首尔大学 首尔大入口">首尔大学 / 首尔大入口</option>
+                  <option value="汉阳大学 往十里">汉阳大学 / 往十里</option>
+                  <option value="弘益大学 弘大入口">弘益大学 / 弘大</option>
+                  <option value="成均馆大学 惠化">成均馆大学 / 惠化</option>
+                  <option value="成均馆大学 水原 栗田">成均馆大学 / 水原栗田</option>
+                  <option value="庆熙大学 回基">庆熙大学 / 回基</option>
+                  <option value="中央大学 黑石">中央大学 / 黑石</option>
+                  <option value="建国大学 建大入口">建国大学 / 建大入口</option>
+                  <option value="梨花女子大学 梨大">梨花女子大学 / 梨大</option>
+                  <option value="西江大学 新村">西江大学 / 新村</option>
+                  <option value="韩国外国语大学 外大前">韩国外国语大学 / 外大前</option>
+                  <option value="东国大学 忠武路">东国大学 / 忠武路</option>
+                  <option value="国民大学 吉音">国民大学 / 吉音</option>
+                  <option value="崇实大学 崇实大入口">崇实大学 / 崇实大入口</option>
+                  <option value="釜山大学 釜山大">釜山大学 / 釜山大</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>区域输入</span>
+                <input id="realAreaInput" name="area" placeholder="也可以手动输入：新村、弘大、往十里" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span>地点 / 学校 / 地铁站</span>
+                <input id="realPlaceInput" name="place" placeholder="例如：延世大学、新村站" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span>最高月租</span>
+                <input id="realRentInput" name="maxRent" type="number" min="20" max="300" step="5" value="85" />
+              </label>
+              <label class="field">
+                <span>房型</span>
+                <select id="realRoomInput" name="room">
+                  <option value="all">全部</option>
+                  <option value="one-room">One-room</option>
+                  <option value="two-room">Two-room</option>
+                  <option value="gosiwon">考试院</option>
+                  <option value="officetel">Officetel</option>
+                </select>
+              </label>
+              <button class="primary-button" type="submit">
+                <i data-lucide="search"></i>
+                搜索真实房源
+              </button>
+            </form>
+            <div class="real-results" id="realResults"></div>
+          </section>
+
+          <section class="listing-toolbar" aria-label="房源筛选">
+            <label class="field">
+              <span>目标学校</span>
+              <select id="schoolFilter">
+                <option value="all">全部学校</option>
+                <option value="Yonsei">延世大学</option>
+                <option value="Korea">高丽大学</option>
+                <option value="SNU">首尔大学</option>
+                <option value="Hanyang">汉阳大学</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>最高月租</span>
+              <input id="rentFilter" type="range" min="35" max="120" step="5" value="85" />
+              <strong id="rentValue">85 万韩元以内</strong>
+            </label>
+
+            <div class="field">
+              <span>房型</span>
+              <div class="segmented room-segments" role="group" aria-label="房型">
+                <button class="segment active" data-room="all">全部</button>
+                <button class="segment" data-room="one-room">One-room</button>
+                <button class="segment" data-room="two-room">Two-room</button>
+                <button class="segment" data-room="gosiwon">考试院</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <span>条件</span>
+              <label class="check-row">
+                <input id="verifiedOnly" type="checkbox" />
+                <span>只看已视频验证</span>
+              </label>
+              <label class="check-row">
+                <input id="chineseOnly" type="checkbox" />
+                <span>可中文沟通</span>
+              </label>
+            </div>
+
+            <div class="field">
+              <span>排序</span>
+              <div class="sort-control">
+                <i data-lucide="arrow-up-down"></i>
+                <select id="sortSelect" aria-label="排序">
+                  <option value="recommended">推荐排序</option>
+                  <option value="rent">月租最低</option>
+                  <option value="distance">离学校最近</option>
+                  <option value="available">最快入住</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="secondary-button toolbar-reset" id="resetFilters" type="button">
+              <i data-lucide="rotate-ccw"></i>
+              重置筛选
+            </button>
+          </section>
+
+          <section class="listing-area">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Nearby Listings</p>
+                <h3>学校周边真实平台入口</h3>
+              </div>
+              <button class="secondary-button" data-jump-view="maps" type="button">
+                <i data-lucide="map"></i>
+                看地图入口
+              </button>
+            </div>
+            <div class="listing-list" id="listingList"></div>
+          </section>
+        </section>
+
+        <section class="view-section" data-view-panel="bookings">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Booking Workspace</p>
+              <h3>预约中心</h3>
+            </div>
+            <p id="bookingWorkspaceCopy">找房人提交视频看房需求；看房人端接单、安排视频链接并回填结果。</p>
+          </div>
+
+          <div class="booking-workspace">
+            <section class="booking-panel seeker-only">
+              <div class="section-head tight">
+                <div>
+                  <p class="eyebrow">Video Tour</p>
+                  <h3>视频看房需求</h3>
+                </div>
+                <i data-lucide="calendar-check"></i>
+              </div>
+              <form id="bookingForm">
+                <label class="field">
+                  <span>意向房源</span>
+                  <select name="listingId" id="bookingListing" required></select>
+                </label>
+                <label class="field">
+                  <span>姓名</span>
+                  <input name="name" placeholder="例如：李同学" required />
+                </label>
+                <label class="field">
+                  <span>联系方式</span>
+                  <input name="contact" placeholder="微信 / KakaoTalk / 邮箱" required />
+                </label>
+                <div class="form-grid">
+                  <label class="field">
+                    <span>预算</span>
+                    <select name="budget">
+                      <option>50-70 万韩元</option>
+                      <option>70-90 万韩元</option>
+                      <option>90-120 万韩元</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>入住</span>
+                    <input name="moveIn" type="date" required />
+                  </label>
+                </div>
+                <label class="field">
+                  <span>看房重点</span>
+                  <textarea name="notes" placeholder="例如：离延世步行 15 分钟内，想检查水压和隔音"></textarea>
+                </label>
+                <button class="primary-button full" type="submit">
+                  <i data-lucide="send"></i>
+                  提交预约
+                </button>
+                <p class="form-note" id="bookingResult" role="status"></p>
+              </form>
+            </section>
+
+            <section class="booking-dashboard" id="bookingDashboard" aria-label="预约中心"></section>
+          </div>
+        </section>
+
+        <section class="view-section" data-view-panel="maps">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Map Workspace</p>
+              <h3>外部地图</h3>
+            </div>
+            <p>把当前筛选后的区域直接带到 Naver 부동산、직방、Naver / Kakao / Google 地图。</p>
+          </div>
+
+          <section class="map-panel map-panel-full">
+            <div class="section-head tight">
+              <div>
+                <p class="eyebrow">External Maps</p>
+                <h3>真实房源与地图入口</h3>
+              </div>
+              <span id="mapSchool">全部</span>
+            </div>
+            <div class="external-map" id="miniMap" aria-label="外部地图房源入口"></div>
+            <div class="map-links" id="mapProviderLinks">
+              <a class="map-link" id="mapAreaLink" href="https://map.naver.com/p/" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+          </section>
+        </section>
+
+        <section class="view-section" data-view-panel="guides">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Guide Workspace</p>
+              <h3>便利知识</h3>
+            </div>
+            <p>把签约、生活、避坑知识单独放在一个区域，方便新生集中阅读。</p>
+          </div>
+
+          <div class="guide-workspace">
+            <section class="knowledge-panel">
+              <div class="section-head tight">
+                <div>
+                  <p class="eyebrow">Guide</p>
+                  <h3>租房知识库</h3>
+                </div>
+                <i data-lucide="book-open-check"></i>
+              </div>
+              <div class="tabs" role="tablist" aria-label="知识分类">
+                <button class="tab active" data-tab="contract">签约</button>
+                <button class="tab" data-tab="life">生活</button>
+                <button class="tab" data-tab="avoid">避坑</button>
+              </div>
+              <div class="guide-list" id="guideList"></div>
+            </section>
+
+            <section class="knowledge-panel check-panel">
+              <div class="section-head tight">
+                <div>
+                  <p class="eyebrow">Checklist</p>
+                  <h3>视频看房检查表</h3>
+                </div>
+                <i data-lucide="shield-check"></i>
+              </div>
+              <ul class="checklist expanded">
+                <li>采光、通风、霉点</li>
+                <li>水压、热水、暖气</li>
+                <li>管理费包含项目</li>
+                <li>楼栋入口、电梯、楼梯和门禁</li>
+                <li>垃圾投放点和晚归路线</li>
+                <li>合同、保证金、维修责任</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+    <aside class="drawer" id="detailDrawer" aria-label="房源详情" aria-hidden="true">
+      <button class="icon-button drawer-close" id="closeDrawer" aria-label="关闭详情">
+        <i data-lucide="x"></i>
+      </button>
+      <div id="drawerContent"></div>
+    </aside>
+
+    <div class="site-viewer-backdrop" id="siteViewerBackdrop" hidden></div>
+    <section class="site-viewer" id="siteViewer" aria-label="站内浏览" aria-hidden="true" hidden>
+      <header class="site-viewer-header">
+        <div>
+          <p class="eyebrow">In-app Browser</p>
+          <h3 id="siteViewerTitle">站内浏览</h3>
+          <p id="siteViewerUrl"></p>
+        </div>
+        <div class="site-viewer-actions">
+          <button class="icon-button" id="reloadSiteViewer" aria-label="重新加载">
+            <i data-lucide="refresh-cw"></i>
+          </button>
+          <button class="icon-button" id="closeSiteViewer" aria-label="关闭站内浏览">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+      </header>
+      <div class="site-viewer-note">
+        如果对方网站禁止嵌入，下面可能显示为空白或拒绝连接；链接仍会留在本页面内。
+      </div>
+      <div class="site-viewer-fallback" id="siteViewerFallback" hidden></div>
+      <iframe id="siteViewerFrame" title="站内浏览内容" loading="lazy"></iframe>
+    </section>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
