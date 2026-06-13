@@ -1,0 +1,21 @@
+{
+  "suwon_jangan": {
+    "region": "\uacbd\uae30\ub3c4 \uc218\uc6d0\uc2dc \uc7a5\uc548\uad6c",
+    "sourcePeriod": "2025-06-13 ~ 2026-06-12",
+    "contractType": "single/multi-family sale actual transactions",
+    "transactionCount": 86,
+    "medianSalePrice": 48625.0,
+    "averageSalePrice": 61668.8,
+    "byHousingType": {
+      "\ub2e4\uac00\uad6c": {
+        "count": 38,
+        "medianSalePrice": 65600.0
+      },
+      "\ub2e8\ub3c5": {
+        "count": 48,
+        "medianSalePrice": 43000.0
+      }
+    },
+    "note": "Ownership/area price reference, not a direct rent price."
+  }
+}
