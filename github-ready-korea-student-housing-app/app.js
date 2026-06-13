@@ -1585,6 +1585,103 @@ function normalizeRealListings(payload) {
   return [];
 }
 
+async function fetchJson(path) {
+  const response = await fetch(path, { headers: { Accept: "application/json" } });
+  if (!response.ok) throw new Error(`${path} returned ${response.status}`);
+  return response.json();
+}
+
+function normalizedSearchText(value) {
+  const aliases = [
+    ["延世", " yonsei "],
+    ["新村", " sinchon "],
+    ["梨大", " ewha "],
+    ["高丽", " korea university "],
+    ["安岩", " anam "],
+    ["首尔大", " snu "],
+    ["首尔", " seoul "],
+    ["汉阳", " hanyang "],
+    ["往十里", " wangsimni "],
+    ["弘益", " hongik "],
+    ["弘大", " hongdae "],
+    ["成均馆", " sungkyunkwan "],
+    ["水原", " suwon "],
+    ["栗田", " yuljeon "],
+    ["惠化", " hyehwa "],
+    ["庆熙", " kyung hee "],
+    ["回基", " hoegi "],
+    ["中央", " chungang "],
+    ["黑石", " heukseok "],
+    ["建国", " konkuk "],
+    ["建大", " konkuk "],
+    ["韩国外国语", " hufs "],
+    ["外大", " hufs "],
+    ["东国", " dongguk "],
+    ["国民", " kookmin "],
+    ["崇实", " soongsil "],
+    ["釜山", " busan "],
+    ["大学", " university "],
+    ["附近", " nearby "],
+    ["入口", " entrance "],
+    ["站", " station "]
+  ];
+  const textValue = String(value || "").trim().toLowerCase();
+  return aliases.reduce((result, [needle, replacement]) => result.replaceAll(needle, replacement), textValue);
+}
+
+function searchTextIncludes(source, target) {
+  const sourceText = normalizedSearchText(source);
+  const targetText = normalizedSearchText(target);
+  const ignoredTokens = new Set(["university", "station", "near", "nearby", "entrance"]);
+  const targetTokens = targetText.split(/\s+/).filter((token) => token && !ignoredTokens.has(token));
+  return targetTokens.length === 0 || targetTokens.every((token) => sourceText.includes(token));
+}
+
+function matchesStaticArea(listing, params) {
+  const haystack = [listing.area, listing.school, listing.station, listing.address, listing.title, ...(listing.keywords || [])].join(" ");
+  return [params.selectedArea, params.typedArea, params.area, params.place].every((part) => searchTextIncludes(haystack, part));
+}
+
+function compareStaticRent(listing, benchmark) {
+  if (!benchmark?.medianMonthlyRent || !listing.monthlyRent) return null;
+  const diff = Number(listing.monthlyRent) - Number(benchmark.medianMonthlyRent);
+  const pct = Math.round((diff / Number(benchmark.medianMonthlyRent)) * 100);
+  return {
+    diff,
+    pct,
+    label: diff <= -5 ? "below" : diff >= 5 ? "above" : "near"
+  };
+}
+
+function enrichStaticListing(listing, datasets) {
+  const safety = listing.districtKey ? datasets.crimeRisk[listing.districtKey] || null : null;
+  const rentMarket = listing.marketRentKey ? datasets.marketRent[listing.marketRentKey] || null : null;
+  const saleMarket = listing.marketSaleKey ? datasets.marketSale[listing.marketSaleKey] || null : null;
+  return {
+    ...listing,
+    safety,
+    rentMarket,
+    saleMarket,
+    rentComparison: compareStaticRent(listing, rentMarket)
+  };
+}
+
+async function searchStaticListings(params) {
+  const [listingsData, crimeRisk, marketRent, marketSale] = await Promise.all([
+    fetchJson("data/listings.json"),
+    fetchJson("data/crime_risk.json"),
+    fetchJson("data/market_rent.json"),
+    fetchJson("data/market_sale.json")
+  ]);
+  const datasets = { crimeRisk, marketRent, marketSale };
+  return listingsData
+    .filter((listing) => matchesStaticArea(listing, params))
+    .filter((listing) => !params.room || params.room === "all" || listing.room === params.room)
+    .filter((listing) => !params.maxRent || Number(listing.monthlyRent || 0) <= Number(params.maxRent))
+    .map((listing) => enrichStaticListing(listing, datasets))
+    .sort((a, b) => Number(b.verified) - Number(a.verified) || Number(a.monthlyRent) - Number(b.monthlyRent));
+}
+
 function formatWan(value) {
   if (value === null || value === undefined || value === "") return "";
   return `${Number(value).toLocaleString("ko-KR")}万`;
@@ -1720,9 +1817,15 @@ async function searchRealListings() {
   elements.realResults.innerHTML = `<div class="empty-state">正在读取真实房源...</div>`;
 
   try {
-    const response = await fetch(buildRealSearchUrl(params), { headers: { Accept: "application/json" } });
-    if (!response.ok) throw new Error(`接口返回 ${response.status}`);
-    const listingsFromApi = normalizeRealListings(await response.json());
+    let listingsFromApi = [];
+    try {
+      const response = await fetch(buildRealSearchUrl(params), { headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error(`接口返回 ${response.status}`);
+      listingsFromApi = normalizeRealListings(await response.json());
+    } catch (apiError) {
+      listingsFromApi = await searchStaticListings(params);
+    }
+
     if (listingsFromApi.length === 0) {
       elements.realSearchStatus.textContent = "没有结果";
       elements.realResults.innerHTML = `<div class="empty-state">没有找到符合条件的真实房源，请换一个区域或价位。</div>`;
