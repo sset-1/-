@@ -8,7 +8,49 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <section class="role-gate" id="roleGate" aria-label="选择身份">
+    <section class="login-gate" id="loginGate" aria-label="登录">
+      <div class="login-panel">
+        <div class="language-switch login-language" aria-label="语言切换">
+          <button class="lang-button active" data-lang="zh" type="button">&#20013;&#25991;</button>
+          <button class="lang-button" data-lang="ko" type="button">&#54620;&#44397;&#50612;</button>
+        </div>
+        <div class="login-copy">
+          <p class="eyebrow">Korea Student Housing</p>
+          <h1>HanStay</h1>
+          <p>登录后查看房源、安全参考、租金行情和预约功能。</p>
+        </div>
+        <form class="login-form" id="loginForm">
+          <div class="section-head tight">
+            <div>
+              <p class="eyebrow">Supabase Auth</p>
+              <h3>登录</h3>
+            </div>
+            <span class="status-pill">真实登录</span>
+          </div>
+          <label class="field">
+            <span>邮箱</span>
+            <input id="loginEmail" name="email" type="email" autocomplete="username" placeholder="输入你的邮箱" required />
+          </label>
+          <label class="field">
+            <span>密码</span>
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="至少 6 位密码" required />
+          </label>
+          <button class="primary-button full" type="submit">
+            <i data-lucide="log-in"></i>
+            登录
+          </button>
+          <p class="form-note" id="loginResult" role="status"></p>
+          <div class="demo-login-grid" aria-label="账号操作">
+            <button class="secondary-button" type="button" id="signupButton">
+              <i data-lucide="user-plus"></i>
+              注册新账号
+            </button>
+          </div>
+          <p class="login-warning">现在使用 Supabase Auth 真实登录；如果开启邮箱验证，注册后需要先去邮箱确认。</p>
+        </form>
+      </div>
+    </section>
+    <section class="role-gate" id="roleGate" aria-label="选择身份" hidden>
       <div class="role-gate-content">
         <div class="language-switch" aria-label="语言切换">
           <button class="lang-button active" data-lang="zh" type="button">中文</button>
@@ -66,6 +108,14 @@
             进入找房人端
           </button>
           <p class="profile-note" id="profileStatus">当前：找房人端</p>
+          <div class="login-session">
+            <span>登录用户</span>
+            <strong id="currentUserLabel">未登录</strong>
+          </div>
+          <button class="secondary-button full subtle" id="logoutButton" type="button">
+            <i data-lucide="log-out"></i>
+            退出登录
+          </button>
           <button class="secondary-button full subtle" id="switchRole" type="button">
             <i data-lucide="arrow-left-right"></i>
             返回身份选择
@@ -156,6 +206,44 @@
             </div>
             <p>按学校、预算和房型生成 Naver 부동산 / 직방 实时检索入口；本页不复制平台房源数据。</p>
           </div>
+
+          <section class="focus-survey-panel" id="focusSurveyPanel" aria-label="水原成均馆房源调查">
+            <div class="section-head tight">
+              <div>
+                <p class="eyebrow">Suwon SKKU Survey</p>
+                <h3>水原成均馆附近房源调查</h3>
+              </div>
+              <span class="status-pill">专题模式</span>
+            </div>
+            <p class="survey-lead">
+              调查范围固定为成均馆大学自然科学校区、성균관대역、栗田洞一带。结果会优先展示本地房源样本、实际租赁行情、安全参考和地图入口。
+            </p>
+            <div class="survey-chip-row">
+              <span>核心区域：水原市长安区栗田洞</span>
+              <span>地铁：성균관대역</span>
+              <span>学校：成均馆大学自然科学校区</span>
+            </div>
+            <div class="survey-card-grid" id="surveyCardGrid">
+              <article>
+                <span>读取中</span>
+                <strong>正在整理调查数据</strong>
+                <p>会从 data/listings.json 和行情/安全数据中汇总。</p>
+              </article>
+            </div>
+            <button class="secondary-button" id="runFocusSurvey" type="button">
+              <i data-lucide="refresh-cw"></i>
+              刷新水原成均馆调查
+            </button>
+            <a
+              class="secondary-button craigslist-source-link"
+              href="https://seoul.craigslist.org/search/apa#search=2~gallery~5"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i data-lucide="external-link"></i>
+              在 Craigslist 原站查看 Seoul 公寓
+            </a>
+          </section>
 
           <section class="real-search-panel" aria-label="真实房源搜索">
             <div class="section-head tight">
@@ -459,6 +547,8 @@
     </section>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js"></script>
     <script src="./app.js"></script>
   </body>
 </html>

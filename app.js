@@ -305,12 +305,14 @@ const state = {
     seeker: { name: "", contact: "" },
     agent: { name: "", contact: "" }
   },
+  currentUser: null,
   bookings: []
 };
 
 const storageKeys = {
   lang: "hanstay-lang",
   role: "hanstay-role",
+  authUser: "hanstay-auth-user",
   profile: "hanstay-profile",
   bookings: "hanstay-bookings"
 };
@@ -658,6 +660,260 @@ const schoolAreaCoords = {
   Hanyang: { lat: 37.5568, lng: 127.0443 }
 };
 
+Object.assign(translations.zh, {
+  loginHeroCopy: "登录后查看房源、安全参考、租金行情和预约功能。",
+  loginTitle: "登录",
+  loginStatus: "真实登录",
+  emailLabel: "邮箱",
+  passwordLabel: "密码",
+  loginEmailPlaceholder: "输入你的邮箱",
+  loginPasswordPlaceholder: "至少 6 位密码",
+  loginSubmit: "登录",
+  signupSubmit: "注册新账号",
+  authActionsLabel: "账号操作",
+  loginWarning: "现在使用 Supabase Auth 真实登录；如果开启邮箱验证，注册后需要先去邮箱确认。",
+  loginUserLabel: "登录用户",
+  notLoggedIn: "未登录",
+  guestMode: "游客模式",
+  loginLoading: "正在登录...",
+  signupLoading: "正在注册...",
+  supabaseMissing: "Supabase SDK 或配置没有加载，请检查网络和 supabase-config.js。",
+  loginFailed: "登录失败，请检查邮箱和密码。",
+  passwordTooShort: "密码至少需要 6 位。",
+  signupFailed: "注册失败。",
+  signupConfirmation: "注册成功。请先去邮箱确认账号，然后再回来登录。",
+  loggedOut: "已退出登录。",
+  wanUnit: "万",
+  perMonthShort: "月",
+  focusSurveyEyebrow: "Suwon SKKU Survey",
+  focusSurveyTitle: "水原成均馆附近房源调查",
+  focusSurveyStatus: "专题模式",
+  focusSurveyLead: "调查范围固定为成均馆大学自然科学校区、성균관대역、栗田洞一带。结果会优先展示本地房源样本、实际租赁行情、安全参考和地图入口。",
+  focusChipArea: "核心区域：水原市长安区栗田洞",
+  focusChipStation: "地铁：성균관대역",
+  focusChipSchool: "学校：成均馆大学自然科学校区",
+  focusLoadingLabel: "读取中",
+  focusLoadingTitle: "正在整理调查数据",
+  focusLoadingBody: "会从 data/listings.json 和行情/安全数据中汇总。",
+  refreshFocusSurvey: "刷新水原成均馆调查",
+  craigslistSource: "在 Craigslist 原站查看 Seoul 公寓",
+  realSearchTitle: "真实房源搜索",
+  realSearchWaiting: "等待输入",
+  realAreaSelectLabel: "区域选择",
+  realAreaInputLabel: "区域输入",
+  realPlaceLabel: "地点 / 学校 / 地铁站",
+  realMaxRentLabel: "最高月租",
+  realRoomLabel: "房型",
+  realAreaAllCustom: "全部 / 自定义",
+  realAreaInputPlaceholder: "也可以手动输入：新村、弘大、往十里",
+  realPlacePlaceholder: "例如：延世大学、新村站",
+  searchRealListingsButton: "搜索真实房源",
+  fixedSurveyArea: "固定调查区域",
+  fixedSurveyAreaOption: "成均馆大学 / 水原栗田",
+  fixedAreaPlaceholder: "已锁定：水原市长安区栗田洞",
+  fixedPlacePlaceholder: "已锁定：成均馆大学自然科学校区 / 성균관대역",
+  viewSurveyListings: "查看调查房源",
+  suwonSearchStatus: "水原成均馆专题",
+  suwonMapLabel: "水原成均馆 / 栗田洞",
+  suwonWorkspaceTitle: "水原成均馆房源调查",
+  suwonWorkspaceHeading: "栗田洞 / 성균관대역 房源调查",
+  suwonWorkspaceCopy: "专题范围固定为水原成均馆大学自然科学校区附近，优先看本地样本、实际租赁行情、安全参考和外部地图入口。",
+  localListingSamples: "本地房源样本",
+  monthlyRentSamples: "月租交易样本",
+  medianMonthlyRent: "月租中位数",
+  safetyReferenceScore: "安全参考分",
+  molitLiveSummary: "国土部 API 实时汇总",
+  localTransactionData: "本地交易数据",
+  rentRangePending: "待补充",
+  surveySampleTitle: "房源样本",
+  surveySampleValue: "{count}套",
+  surveySampleBody: "当前本地库只保留水原成均馆/栗田洞样本，月租范围 {range}。",
+  authorizedFeedTitle: "授权接口",
+  authorizedFeedConfigured: "{count}个已配置",
+  authorizedFeedMissing: "未配置",
+  authorizedFeedBody: "本地授权房源 {count} 条。可配置 Naver、직방 或中介授权接口后自动合并显示。",
+  rentMarketTitle: "租金行情",
+  rentMarketBody: "{source}：押金中位数 {deposit}，交易样本 {count} 件。",
+  noRentMarketData: "未找到租赁行情数据。",
+  safetyReferenceTitle: "安全参考",
+  safetyReferenceBody: "统计口径为 {region}，总案件 {cases} 件。此数据按城市汇总，不等同于栗田洞小区级风险。",
+  noSafetyData: "未找到安全统计数据。",
+  saleMarketTitle: "买卖行情",
+  saleMarketBody: "{source}：{region} 单独/多户买卖样本 {count} 件，仅作区域资产价格参考。",
+  noSaleMarketData: "未找到买卖行情数据。",
+  surveyDataFailed: "数据读取失败",
+  checkDataFiles: "请检查 data 文件",
+  riskLow: "较低",
+  riskMedium: "中等",
+  riskHigh: "偏高",
+  riskReference: "参考",
+  safetyCases: "总案件 {total} · 强力 {violent}",
+  belowMarket: "低于行情",
+  nearMarket: "接近行情",
+  aboveMarket: "高于行情",
+  marketReference: "行情参考",
+  medianMonthlyRentValue: "中位月租 {rent}",
+  medianDepositValue: "押金中位 {deposit}",
+  medianSaleValue: "成交中位 {price}",
+  saleTransactionMeta: "{count}笔 · {period}",
+  unnamedRealListing: "未命名房源",
+  realSource: "真实来源",
+  priceCheckNeeded: "价格待确认",
+  realMonthlyRent: "月租 {rent}万",
+  realDeposit: "保证金 {deposit}万",
+  viewSourceConditions: "查看来源与检索条件",
+  needApiStatus: "需要接入接口",
+  noRealApiTitle: "还没有可用的真实房源接口",
+  noRealApiBody: "前端已经会请求 {endpoint}。接入后端后，这里会直接显示真实房源卡片，而不是跳转外部平台。",
+  inSiteNaverMap: "在站内查 Naver 地图",
+  inSiteKakao: "在站内查 Kakao",
+  inSiteGoogle: "在站内查 Google",
+  apiContractSummary: "后端需要返回的数据格式",
+  realSearchLoading: "搜索中",
+  realSearchReading: "正在读取真实房源...",
+  realSearchNoResultsStatus: "没有结果",
+  realSearchNoResults: "没有找到符合条件的真实房源，请换一个区域或价位。",
+  realSearchCount: "{count} 套房源",
+  realInitialFile: "现在是 file:// 打开，无法请求 /api/listings。请用 http://127.0.0.1:8001/index.html 打开。",
+  realInitialHttp: "选择区域、地点、价位和房型后搜索；房源卡片会显示安全参考、租金行情和买卖行情。",
+  realInitialDefault: "输入区域、地点、价位和房型后搜索；接入 /api/listings 后这里会直接显示真实房源。",
+  siteViewerTitle: "站内浏览",
+  siteViewerNote: "如果对方网站禁止嵌入，下面可能显示为空白或拒绝连接；链接仍会留在本页面内。",
+  iframeBlockedTitle: "{source} 不允许嵌入到 iframe",
+  iframeBlockedBody: "这类房源/地图网站通常设置了浏览器安全策略，所以不能把原始网页直接塞进你的前端里。要在你的页面里直接显示真实房源，需要后端拿到合法数据源后，再由我们自己的 UI 渲染卡片。",
+  copyOriginalLink: "复制原始链接",
+  backToSiteResults: "返回站内结果",
+  localApiHint: "现在的本地接口会返回站内结果卡片；下一步把 server.js 里的 buildListings() 接到真实授权数据源，就能在这里显示逐套房源。",
+  copied: "已复制"
+});
+
+Object.assign(translations.ko, {
+  loginHeroCopy: "로그인 후 매물, 안전 참고, 임대 시세와 예약 기능을 확인할 수 있습니다.",
+  loginTitle: "로그인",
+  loginStatus: "실제 로그인",
+  emailLabel: "이메일",
+  passwordLabel: "비밀번호",
+  loginEmailPlaceholder: "이메일을 입력하세요",
+  loginPasswordPlaceholder: "최소 6자리 비밀번호",
+  loginSubmit: "로그인",
+  signupSubmit: "새 계정 만들기",
+  authActionsLabel: "계정 작업",
+  loginWarning: "Supabase Auth로 실제 로그인합니다. 이메일 인증을 켠 경우 가입 후 먼저 메일을 확인하세요.",
+  loginUserLabel: "로그인 사용자",
+  notLoggedIn: "로그인 전",
+  guestMode: "게스트 모드",
+  loginLoading: "로그인 중...",
+  signupLoading: "가입 중...",
+  supabaseMissing: "Supabase SDK 또는 설정을 불러오지 못했습니다. 네트워크와 supabase-config.js를 확인하세요.",
+  loginFailed: "로그인에 실패했습니다. 이메일과 비밀번호를 확인하세요.",
+  passwordTooShort: "비밀번호는 최소 6자리여야 합니다.",
+  signupFailed: "가입에 실패했습니다.",
+  signupConfirmation: "가입이 완료되었습니다. 이메일 인증 후 다시 로그인하세요.",
+  loggedOut: "로그아웃되었습니다.",
+  wanUnit: "만",
+  perMonthShort: "월",
+  focusSurveyEyebrow: "Suwon SKKU Survey",
+  focusSurveyTitle: "수원 성균관대 주변 매물 조사",
+  focusSurveyStatus: "집중 조사",
+  focusSurveyLead: "조사 범위는 성균관대 자연과학캠퍼스, 성균관대역, 율전동 일대로 고정됩니다. 로컬 매물 샘플, 실제 임대 시세, 안전 참고와 지도 링크를 우선 표시합니다.",
+  focusChipArea: "핵심 지역: 수원시 장안구 율전동",
+  focusChipStation: "지하철: 성균관대역",
+  focusChipSchool: "학교: 성균관대 자연과학캠퍼스",
+  focusLoadingLabel: "불러오는 중",
+  focusLoadingTitle: "조사 데이터를 정리하고 있습니다",
+  focusLoadingBody: "data/listings.json과 시세/안전 데이터를 함께 요약합니다.",
+  refreshFocusSurvey: "수원 성균관대 조사 새로고침",
+  craigslistSource: "Craigslist 원문에서 Seoul 아파트 보기",
+  realSearchTitle: "실매물 검색",
+  realSearchWaiting: "입력 대기",
+  realAreaSelectLabel: "지역 선택",
+  realAreaInputLabel: "지역 직접 입력",
+  realPlaceLabel: "장소 / 학교 / 지하철역",
+  realMaxRentLabel: "최대 월세",
+  realRoomLabel: "방 유형",
+  realAreaAllCustom: "전체 / 직접 입력",
+  realAreaInputPlaceholder: "예: 신촌, 홍대, 왕십리",
+  realPlacePlaceholder: "예: 연세대학교, 신촌역",
+  searchRealListingsButton: "실매물 검색",
+  fixedSurveyArea: "고정 조사 지역",
+  fixedSurveyAreaOption: "성균관대 / 수원 율전",
+  fixedAreaPlaceholder: "고정됨: 수원시 장안구 율전동",
+  fixedPlacePlaceholder: "고정됨: 성균관대 자연과학캠퍼스 / 성균관대역",
+  viewSurveyListings: "조사 매물 보기",
+  suwonSearchStatus: "수원 성균관대 집중",
+  suwonMapLabel: "수원 성균관대 / 율전동",
+  suwonWorkspaceTitle: "수원 성균관대 매물 조사",
+  suwonWorkspaceHeading: "율전동 / 성균관대역 매물 조사",
+  suwonWorkspaceCopy: "범위는 수원 성균관대 자연과학캠퍼스 주변으로 고정되며, 로컬 샘플, 실제 임대 시세, 안전 참고와 외부 지도 링크를 우선 확인합니다.",
+  localListingSamples: "로컬 매물 샘플",
+  monthlyRentSamples: "월세 거래 샘플",
+  medianMonthlyRent: "월세 중위값",
+  safetyReferenceScore: "안전 참고 점수",
+  molitLiveSummary: "국토부 API 실시간 요약",
+  localTransactionData: "로컬 거래 데이터",
+  rentRangePending: "보완 예정",
+  surveySampleTitle: "매물 샘플",
+  surveySampleValue: "{count}건",
+  surveySampleBody: "현재 로컬 DB에는 수원 성균관대/율전동 샘플만 보관되어 있으며 월세 범위는 {range}입니다.",
+  authorizedFeedTitle: "제휴 API",
+  authorizedFeedConfigured: "{count}개 설정됨",
+  authorizedFeedMissing: "미설정",
+  authorizedFeedBody: "로컬 제휴 매물 {count}건. Naver, 직방 또는 중개사 제휴 API를 설정하면 자동으로 합쳐서 표시합니다.",
+  rentMarketTitle: "임대 시세",
+  rentMarketBody: "{source}: 보증금 중위값 {deposit}, 거래 샘플 {count}건.",
+  noRentMarketData: "임대 시세 데이터를 찾지 못했습니다.",
+  safetyReferenceTitle: "안전 참고",
+  safetyReferenceBody: "통계 기준은 {region}, 전체 사건 {cases}건입니다. 이 데이터는 도시 단위 요약이며 율전동 단지별 위험도와 같지 않습니다.",
+  noSafetyData: "안전 통계 데이터를 찾지 못했습니다.",
+  saleMarketTitle: "매매 시세",
+  saleMarketBody: "{source}: {region} 단독/다가구 매매 샘플 {count}건이며 지역 자산 가격 참고용입니다.",
+  noSaleMarketData: "매매 시세 데이터를 찾지 못했습니다.",
+  surveyDataFailed: "데이터 로딩 실패",
+  checkDataFiles: "data 파일을 확인하세요",
+  riskLow: "낮음",
+  riskMedium: "보통",
+  riskHigh: "높음",
+  riskReference: "참고",
+  safetyCases: "전체 사건 {total} · 강력 {violent}",
+  belowMarket: "시세보다 낮음",
+  nearMarket: "시세와 비슷함",
+  aboveMarket: "시세보다 높음",
+  marketReference: "시세 참고",
+  medianMonthlyRentValue: "월세 중위값 {rent}",
+  medianDepositValue: "보증금 중위값 {deposit}",
+  medianSaleValue: "거래 중위값 {price}",
+  saleTransactionMeta: "{count}건 · {period}",
+  unnamedRealListing: "이름 없는 매물",
+  realSource: "실제 출처",
+  priceCheckNeeded: "가격 확인 필요",
+  realMonthlyRent: "월세 {rent}만",
+  realDeposit: "보증금 {deposit}만",
+  viewSourceConditions: "출처와 검색 조건 보기",
+  needApiStatus: "API 연결 필요",
+  noRealApiTitle: "사용 가능한 실매물 API가 아직 없습니다",
+  noRealApiBody: "프런트엔드는 이미 {endpoint}를 요청합니다. 백엔드를 연결하면 외부 플랫폼으로 이동하지 않고 이곳에 실매물 카드를 바로 표시합니다.",
+  inSiteNaverMap: "내부에서 Naver 지도 보기",
+  inSiteKakao: "내부에서 Kakao 보기",
+  inSiteGoogle: "내부에서 Google 보기",
+  apiContractSummary: "백엔드가 반환해야 할 데이터 형식",
+  realSearchLoading: "검색 중",
+  realSearchReading: "실매물을 불러오는 중...",
+  realSearchNoResultsStatus: "결과 없음",
+  realSearchNoResults: "조건에 맞는 실매물을 찾지 못했습니다. 지역이나 가격을 바꿔 보세요.",
+  realSearchCount: "{count}개 매물",
+  realInitialFile: "file://로 열려 있어 /api/listings를 요청할 수 없습니다. http://127.0.0.1:8001/index.html 로 열어 주세요.",
+  realInitialHttp: "지역, 장소, 가격과 방 유형을 선택한 뒤 검색하세요. 매물 카드에 안전 참고, 임대 시세와 매매 시세가 표시됩니다.",
+  realInitialDefault: "지역, 장소, 가격과 방 유형을 입력한 뒤 검색하세요. /api/listings 연결 후 이곳에 실매물이 바로 표시됩니다.",
+  siteViewerTitle: "내부 보기",
+  siteViewerNote: "상대 사이트가 임베드를 막으면 아래가 빈 화면이거나 연결 거부로 보일 수 있습니다. 링크는 이 페이지 안에 남습니다.",
+  iframeBlockedTitle: "{source}는 iframe 삽입을 허용하지 않습니다",
+  iframeBlockedBody: "이런 매물/지도 사이트는 보통 브라우저 보안 정책을 설정해 원본 페이지를 프런트엔드 안에 직접 넣을 수 없습니다. 페이지 안에서 실매물을 직접 표시하려면 백엔드가 합법적인 데이터 소스를 받은 뒤 자체 UI로 카드를 렌더링해야 합니다.",
+  copyOriginalLink: "원본 링크 복사",
+  backToSiteResults: "내부 결과로 돌아가기",
+  localApiHint: "현재 로컬 API는 내부 결과 카드를 반환합니다. 다음 단계로 server.js의 buildListings()를 실제 제휴 데이터 소스에 연결하면 이곳에 매물을 하나씩 표시할 수 있습니다.",
+  copied: "복사됨"
+});
+
 const realEstateProviders = [
   {
     id: "naverLand",
@@ -694,6 +950,24 @@ const mapProviders = [
 ];
 
 const realListingsEndpoint = "/api/listings";
+const authEnabled = true;
+const supabaseSettings = window.HANSTAY_SUPABASE || {};
+const supabaseClient =
+  authEnabled && window.supabase && supabaseSettings.url && supabaseSettings.publishableKey
+    ? window.supabase.createClient(supabaseSettings.url, supabaseSettings.publishableKey)
+    : null;
+const suwonSurveyMode = {
+  enabled: true,
+  areaSelect: "成均馆大学 水原 栗田",
+  mapLabel: "水原成均馆 / 栗田洞",
+  query: "성균관대학교 자연과학캠퍼스 율전동 원룸 월세",
+  coords: { lat: 37.2936, lng: 126.9756 },
+  maxRent: 85,
+  room: "all",
+  districtKey: "gyeonggi_suwon",
+  marketRentKey: "suwon_jangan_yuljeon",
+  marketSaleKey: "suwon_jangan"
+};
 const realRoomLabels = {
   all: "전체",
   "one-room": "원룸",
@@ -703,6 +977,12 @@ const realRoomLabels = {
 };
 
 const elements = {
+  loginGate: document.querySelector("#loginGate"),
+  loginForm: document.querySelector("#loginForm"),
+  loginEmail: document.querySelector("#loginEmail"),
+  loginPassword: document.querySelector("#loginPassword"),
+  loginResult: document.querySelector("#loginResult"),
+  signupButton: document.querySelector("#signupButton"),
   roleGate: document.querySelector("#roleGate"),
   appShell: document.querySelector("#appShell"),
   langButtons: document.querySelectorAll("[data-lang]"),
@@ -730,6 +1010,9 @@ const elements = {
   realRoomInput: document.querySelector("#realRoomInput"),
   realResults: document.querySelector("#realResults"),
   realSearchStatus: document.querySelector("#realSearchStatus"),
+  focusSurveyPanel: document.querySelector("#focusSurveyPanel"),
+  surveyCardGrid: document.querySelector("#surveyCardGrid"),
+  runFocusSurvey: document.querySelector("#runFocusSurvey"),
   pendingCount: document.querySelector("#pendingCount"),
   confirmedCount: document.querySelector("#confirmedCount"),
   completedCount: document.querySelector("#completedCount"),
@@ -749,6 +1032,8 @@ const elements = {
   profileNameLabel: document.querySelector("#profileNameLabel"),
   profileContactLabel: document.querySelector("#profileContactLabel"),
   profileStatus: document.querySelector("#profileStatus"),
+  currentUserLabel: document.querySelector("#currentUserLabel"),
+  logoutButton: document.querySelector("#logoutButton"),
   saveProfile: document.querySelector("#saveProfile"),
   detailDrawer: document.querySelector("#detailDrawer"),
   drawerBackdrop: document.querySelector("#drawerBackdrop"),
@@ -785,6 +1070,15 @@ function setFieldLabel(control, value) {
   const label = control?.closest(".field");
   const labelText = label?.querySelector("span");
   if (labelText) labelText.textContent = value;
+}
+
+function setButtonLabel(selector, value) {
+  const button = typeof selector === "string" ? document.querySelector(selector) : selector;
+  if (!button) return;
+  const icon = button.querySelector("i, svg");
+  button.textContent = "";
+  if (icon) button.append(icon);
+  button.append(` ${value}`);
 }
 
 function setSelectOptions(select, options) {
@@ -851,6 +1145,19 @@ function applyStaticLanguage() {
     button.classList.toggle("active", button.dataset.lang === state.lang);
   });
 
+  setText(".login-copy p:last-child", text("loginHeroCopy"));
+  setText("#loginForm .section-head h3", text("loginTitle"));
+  setText("#loginForm .status-pill", text("loginStatus"));
+  setFieldLabel(elements.loginEmail, text("emailLabel"));
+  setFieldLabel(elements.loginPassword, text("passwordLabel"));
+  elements.loginEmail.placeholder = text("loginEmailPlaceholder");
+  elements.loginPassword.placeholder = text("loginPasswordPlaceholder");
+  setButtonLabel('#loginForm button[type="submit"]', text("loginSubmit"));
+  setButtonLabel(elements.signupButton, text("signupSubmit"));
+  document.querySelector(".demo-login-grid")?.setAttribute("aria-label", text("authActionsLabel"));
+  setText(".login-warning", text("loginWarning"));
+  setText(".login-session span", text("loginUserLabel"));
+
   setText(".gate-copy", text("gateCopy"));
   setText('[data-enter-role="seeker"] strong', text("seekerChoiceTitle"));
   setText('[data-enter-role="seeker"] span', text("seekerChoiceBody"));
@@ -878,6 +1185,34 @@ function applyStaticLanguage() {
 
   setText('[data-view-panel="listings"] .workspace-heading h3', text("listingsTitle"));
   setText('[data-view-panel="listings"] .workspace-heading p:last-child', text("listingsCopy"));
+  setText("#focusSurveyPanel .section-head .eyebrow", text("focusSurveyEyebrow"));
+  setText("#focusSurveyPanel .section-head h3", text("focusSurveyTitle"));
+  setText("#focusSurveyPanel .section-head .status-pill", text("focusSurveyStatus"));
+  setText("#focusSurveyPanel .survey-lead", text("focusSurveyLead"));
+  const surveyChips = document.querySelectorAll("#focusSurveyPanel .survey-chip-row span");
+  [text("focusChipArea"), text("focusChipStation"), text("focusChipSchool")].forEach((value, index) => {
+    if (surveyChips[index]) surveyChips[index].textContent = value;
+  });
+  const loadingSurveyCard = elements.surveyCardGrid?.querySelector("article");
+  if (loadingSurveyCard && elements.surveyCardGrid.children.length === 1) {
+    loadingSurveyCard.querySelector("span").textContent = text("focusLoadingLabel");
+    loadingSurveyCard.querySelector("strong").textContent = text("focusLoadingTitle");
+    loadingSurveyCard.querySelector("p").textContent = text("focusLoadingBody");
+  }
+  setButtonLabel(elements.runFocusSurvey, text("refreshFocusSurvey"));
+  setButtonLabel(".craigslist-source-link", text("craigslistSource"));
+  setText(".real-search-panel .section-head h3", text("realSearchTitle"));
+  setText(".real-search-panel .section-head .status-pill", text("realSearchWaiting"));
+  setFieldLabel(elements.realAreaSelect, text("realAreaSelectLabel"));
+  setFieldLabel(elements.realAreaInput, text("realAreaInputLabel"));
+  setFieldLabel(elements.realPlaceInput, text("realPlaceLabel"));
+  setFieldLabel(elements.realRentInput, text("realMaxRentLabel"));
+  setFieldLabel(elements.realRoomInput, text("realRoomLabel"));
+  const realAreaFirstOption = elements.realAreaSelect?.querySelector('option[value=""]');
+  if (realAreaFirstOption) realAreaFirstOption.textContent = text("realAreaAllCustom");
+  elements.realAreaInput.placeholder = text("realAreaInputPlaceholder");
+  elements.realPlaceInput.placeholder = text("realPlacePlaceholder");
+  setButtonLabel('#realSearchForm button[type="submit"]', text("searchRealListingsButton"));
   setFieldLabel(elements.schoolFilter, text("schoolField"));
   setFieldLabel(elements.rentFilter, text("rentField"));
   elements.rentValue.textContent = text("rentValue", { rent: state.rent });
@@ -929,6 +1264,8 @@ function applyStaticLanguage() {
   setText('[data-view-panel="maps"] .workspace-heading h3', text("mapsTitle"));
   setText('[data-view-panel="maps"] .workspace-heading p:last-child', text("mapsCopy"));
   setText(".map-panel .section-head h3", text("mapPanelTitle"));
+  setText("#siteViewerTitle", text("siteViewerTitle"));
+  setText(".site-viewer-note", text("siteViewerNote"));
 
   setText('[data-view-panel="guides"] .workspace-heading h3', text("guidesTitle"));
   setText('[data-view-panel="guides"] .workspace-heading p:last-child', text("guidesCopy"));
@@ -953,6 +1290,7 @@ function setLanguage(lang) {
   setActiveView(state.activeView);
   renderWorkspaceChrome();
   refreshIcons();
+  applySuwonSurveyMode();
 }
 
 function getAllowedView(view) {
@@ -974,10 +1312,203 @@ function setActiveView(view) {
   refreshIcons();
 }
 
+function getSuwonSurveyTarget() {
+  return {
+    coords: suwonSurveyMode.coords,
+    naverQuery: suwonSurveyMode.query
+  };
+}
+
+function renderSuwonMapLinks() {
+  if (!suwonSurveyMode.enabled || !elements.mapProviderLinks) return;
+  const target = getSuwonSurveyTarget();
+  const mapLabel = text("suwonMapLabel");
+  elements.mapSchool.textContent = mapLabel;
+  elements.mapProviderLinks.innerHTML = [
+    ...realEstateProviders.map(
+      (provider) => `
+        <a class="map-link ${provider.id}" href="${provider.url(target)}" target="_blank" rel="noopener noreferrer">
+          <i data-lucide="${provider.icon}"></i>
+          ${text("providers")[provider.id] || provider.name} · ${mapLabel}
+        </a>
+      `
+    ),
+    ...mapProviders.map(
+      (provider) => `
+        <a class="map-link ${provider.id}" href="${getMapUrl(provider.id, suwonSurveyMode.query)}" target="_blank" rel="noopener noreferrer">
+          <i data-lucide="${provider.icon}"></i>
+          ${text("providers")[provider.id] || provider.name} · ${mapLabel}
+        </a>
+      `
+    )
+  ].join("");
+}
+
+function renderSurveyCard(label, value, detail) {
+  return `
+    <article>
+      <span>${label}</span>
+      <strong>${value}</strong>
+      <p>${detail}</p>
+    </article>
+  `;
+}
+
+async function fetchOptionalJson(path) {
+  try {
+    return await fetchJson(path);
+  } catch {
+    return null;
+  }
+}
+
+async function fetchLiveMolitSummary(kind) {
+  if (location.protocol !== "http:" && location.protocol !== "https:") return null;
+  const endpoint = kind === "sale" ? "/api/molit/sale" : "/api/molit/rent";
+  const params = new URLSearchParams({
+    lawdCd: "41111",
+    from: "202506",
+    to: "202606",
+    dong: kind === "sale" ? "" : "율전동"
+  });
+  return fetchOptionalJson(`${endpoint}?${params.toString()}`);
+}
+
+async function fetchAuthorizedStatus() {
+  if (location.protocol !== "http:" && location.protocol !== "https:") return null;
+  return fetchOptionalJson("/api/authorized/status");
+}
+
+async function renderSuwonSurveySummary() {
+  if (!suwonSurveyMode.enabled || !elements.surveyCardGrid) return;
+
+  try {
+    const [listingsData, crimeRisk, marketRent, marketSale, liveRent, liveSale, authorizedStatus] = await Promise.all([
+      fetchJson("data/listings.json"),
+      fetchJson("data/crime_risk.json"),
+      fetchJson("data/market_rent.json"),
+      fetchJson("data/market_sale.json"),
+      fetchLiveMolitSummary("rent"),
+      fetchLiveMolitSummary("sale"),
+      fetchAuthorizedStatus()
+    ]);
+    const focusedListings = listingsData.filter(
+      (listing) =>
+        listing.marketRentKey === suwonSurveyMode.marketRentKey ||
+        (listing.districtKey === suwonSurveyMode.districtKey && searchTextIncludes([listing.area, listing.school, listing.station, listing.address].join(" "), suwonSurveyMode.areaSelect))
+    );
+    const rentMarket = liveRent?.summary?.monthlyCount ? liveRent.summary : marketRent[suwonSurveyMode.marketRentKey];
+    const saleMarket = liveSale?.summary?.transactionCount ? liveSale.summary : marketSale[suwonSurveyMode.marketSaleKey];
+    const safety = crimeRisk[suwonSurveyMode.districtKey];
+    const rentSourceLabel = liveRent?.summary?.monthlyCount ? text("molitLiveSummary") : text("localTransactionData");
+    const saleSourceLabel = liveSale?.summary?.transactionCount ? text("molitLiveSummary") : text("localTransactionData");
+    const configuredAuthorizedProviders = authorizedStatus?.providers?.filter((provider) => provider.configured).length || 0;
+    const localAuthorizedCount = authorizedStatus?.localFile?.count || 0;
+    const rents = focusedListings.map((listing) => Number(listing.monthlyRent)).filter(Boolean).sort((a, b) => a - b);
+    const rentRange = rents.length ? `${rents[0]}-${rents[rents.length - 1]}${text("wanUnit")}` : text("rentRangePending");
+
+    elements.visibleCount.textContent = focusedListings.length;
+    setText("#visibleCount + p", text("localListingSamples"));
+    elements.pendingCount.textContent = rentMarket?.monthlyCount ? Number(rentMarket.monthlyCount).toLocaleString("ko-KR") : "0";
+    setText("#pendingCount + p", text("monthlyRentSamples"));
+    elements.confirmedCount.textContent = rentMarket?.medianMonthlyRent ? `${rentMarket.medianMonthlyRent}万` : "-";
+    setText("#confirmedCount + p", text("medianMonthlyRent"));
+    elements.completedCount.textContent = safety?.safetyScore !== undefined ? `${safety.safetyScore}/100` : "-";
+    setText("#completedCount + p", text("safetyReferenceScore"));
+
+    elements.surveyCardGrid.innerHTML = [
+      renderSurveyCard(text("surveySampleTitle"), text("surveySampleValue", { count: focusedListings.length }), text("surveySampleBody", { range: rentRange })),
+      renderSurveyCard(
+        text("authorizedFeedTitle"),
+        configuredAuthorizedProviders ? text("authorizedFeedConfigured", { count: configuredAuthorizedProviders }) : text("authorizedFeedMissing"),
+        text("authorizedFeedBody", { count: localAuthorizedCount })
+      ),
+      renderSurveyCard(
+        text("rentMarketTitle"),
+        rentMarket ? `${formatWan(rentMarket.medianMonthlyRent)} / ${text("perMonthShort")}` : text("rentRangePending"),
+        rentMarket
+          ? text("rentMarketBody", {
+              source: rentSourceLabel,
+              deposit: formatWan(rentMarket.medianMonthlyDeposit),
+              count: Number(rentMarket.monthlyCount).toLocaleString("ko-KR")
+            })
+          : text("noRentMarketData")
+      ),
+      renderSurveyCard(
+        text("safetyReferenceTitle"),
+        safety ? `${safety.safetyScore}/100` : text("rentRangePending"),
+        safety
+          ? text("safetyReferenceBody", {
+              region: safety.region,
+              cases: Number(safety.totalCases).toLocaleString("ko-KR")
+            })
+          : text("noSafetyData")
+      ),
+      renderSurveyCard(
+        text("saleMarketTitle"),
+        saleMarket ? `${formatWan(saleMarket.medianSalePrice)}` : text("rentRangePending"),
+        saleMarket
+          ? text("saleMarketBody", {
+              source: saleSourceLabel,
+              region: saleMarket.region,
+              count: Number(saleMarket.transactionCount).toLocaleString("ko-KR")
+            })
+          : text("noSaleMarketData")
+      )
+    ].join("");
+  } catch (error) {
+    elements.surveyCardGrid.innerHTML = `
+      <article>
+        <span>${text("surveyDataFailed")}</span>
+        <strong>${text("checkDataFiles")}</strong>
+        <p>${escapeHtml(error.message)}</p>
+      </article>
+    `;
+  }
+
+  refreshIcons();
+}
+
+function applySuwonSurveyMode(options = {}) {
+  if (!suwonSurveyMode.enabled) return;
+  const { autoSearch = false } = options;
+
+  document.body.classList.add("suwon-focus");
+  document.querySelector(".listing-toolbar")?.setAttribute("hidden", "");
+  document.querySelector(".listing-area")?.setAttribute("hidden", "");
+  setText("#workspaceEyebrow", "Suwon SKKU Survey");
+  setText("#workspaceTitle", text("suwonWorkspaceTitle"));
+  setText('[data-view-panel="listings"] .workspace-heading .eyebrow', "Sungkyunkwan Natural Sciences Campus");
+  setText('[data-view-panel="listings"] .workspace-heading h3', text("suwonWorkspaceHeading"));
+  setText('[data-view-panel="listings"] .workspace-heading p:last-child', text("suwonWorkspaceCopy"));
+
+  setFieldLabel(elements.realAreaSelect, text("fixedSurveyArea"));
+  setSelectOptions(elements.realAreaSelect, [{ value: suwonSurveyMode.areaSelect, label: text("fixedSurveyAreaOption") }]);
+  elements.realAreaSelect.value = suwonSurveyMode.areaSelect;
+  elements.realAreaSelect.disabled = true;
+  elements.realAreaInput.value = "";
+  elements.realAreaInput.placeholder = text("fixedAreaPlaceholder");
+  elements.realAreaInput.closest(".field").hidden = true;
+  elements.realPlaceInput.value = "";
+  elements.realPlaceInput.placeholder = text("fixedPlacePlaceholder");
+  elements.realPlaceInput.closest(".field").hidden = true;
+  elements.realRentInput.value = String(suwonSurveyMode.maxRent);
+  elements.realRoomInput.value = suwonSurveyMode.room;
+  setFieldLabel(elements.realRentInput, text("realMaxRentLabel"));
+  setFieldLabel(elements.realRoomInput, text("realRoomLabel"));
+  setButtonLabel('#realSearchForm button[type="submit"]', text("viewSurveyListings"));
+  elements.realSearchStatus.textContent = text("suwonSearchStatus");
+
+  renderSuwonMapLinks();
+  renderSuwonSurveySummary();
+  if (autoSearch) searchRealListings();
+}
+
 function enterRole(role) {
   state.role = role === "agent" ? "agent" : "seeker";
   localStorage.setItem(storageKeys.role, state.role);
   document.body.dataset.role = state.role;
+  elements.loginGate.hidden = true;
   elements.roleGate.hidden = true;
   elements.appShell.hidden = false;
   renderWorkspaceChrome();
@@ -987,21 +1518,191 @@ function enterRole(role) {
 }
 
 function showRoleGate() {
+  if (!state.currentUser) {
+    showLoginGate();
+    return;
+  }
+  elements.loginGate.hidden = true;
   elements.appShell.hidden = true;
   elements.roleGate.hidden = false;
   document.body.removeAttribute("data-role");
   refreshIcons();
 }
 
+function getSessionUser(user) {
+  const metadata = user.user_metadata || {};
+  const email = user.email || "";
+  return {
+    id: user.id,
+    role: metadata.role === "agent" ? "agent" : "seeker",
+    name: metadata.full_name || metadata.name || email.split("@")[0] || "HanStay User",
+    email,
+    contact: metadata.contact || email
+  };
+}
+
+function renderAuthUser() {
+  if (!elements.currentUserLabel) return;
+  if (!authEnabled) {
+    elements.currentUserLabel.textContent = text("guestMode");
+    if (elements.logoutButton) elements.logoutButton.hidden = true;
+    return;
+  }
+  elements.currentUserLabel.textContent = state.currentUser
+    ? `${state.currentUser.name} · ${state.currentUser.email}`
+    : text("notLoggedIn");
+  if (elements.logoutButton) elements.logoutButton.hidden = !state.currentUser;
+}
+
+function showLoginGate(message = "") {
+  if (!authEnabled) {
+    enterRole("seeker");
+    return;
+  }
+  elements.loginGate.hidden = false;
+  elements.roleGate.hidden = true;
+  elements.appShell.hidden = true;
+  document.body.removeAttribute("data-role");
+  if (elements.loginResult) elements.loginResult.textContent = message;
+  renderAuthUser();
+  refreshIcons();
+}
+
+function applyAuthenticatedUser(user, options = {}) {
+  if (!authEnabled) {
+    enterRole("seeker");
+    return;
+  }
+  const { persist = true } = options;
+  const sessionUser = getSessionUser(user);
+  state.currentUser = sessionUser;
+  state.role = sessionUser.role;
+  state.profile[sessionUser.role] = {
+    name: sessionUser.name,
+    contact: sessionUser.contact
+  };
+  if (persist) {
+    localStorage.setItem(storageKeys.authUser, JSON.stringify(sessionUser));
+  }
+  saveProfileState();
+  renderAuthUser();
+  enterRole(sessionUser.role);
+}
+
+async function authenticateSupabaseUser(email, password) {
+  elements.loginResult.textContent = text("loginLoading");
+  if (!supabaseClient) {
+    elements.loginResult.textContent = text("supabaseMissing");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email.trim(),
+    password
+  });
+
+  if (error) {
+    elements.loginResult.textContent = error.message || text("loginFailed");
+    return;
+  }
+
+  elements.loginResult.textContent = "";
+  if (data.user) applyAuthenticatedUser(data.user);
+}
+
+async function registerSupabaseUser(email, password) {
+  elements.loginResult.textContent = text("signupLoading");
+  if (!supabaseClient) {
+    elements.loginResult.textContent = text("supabaseMissing");
+    return;
+  }
+  if (password.length < 6) {
+    elements.loginResult.textContent = text("passwordTooShort");
+    return;
+  }
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email: email.trim(),
+    password,
+    options: {
+      data: {
+        role: "seeker",
+        full_name: email.trim().split("@")[0]
+      }
+    }
+  });
+
+  if (error) {
+    elements.loginResult.textContent = error.message || text("signupFailed");
+    return;
+  }
+
+  if (data.session && data.user) {
+    elements.loginResult.textContent = "";
+    applyAuthenticatedUser(data.user);
+  } else {
+    elements.loginResult.textContent = text("signupConfirmation");
+  }
+}
+
+async function logout() {
+  if (supabaseClient) await supabaseClient.auth.signOut();
+  localStorage.removeItem(storageKeys.authUser);
+  state.currentUser = null;
+  elements.loginPassword.value = "";
+  showLoginGate(text("loggedOut"));
+}
+
+async function getAuthHeaders() {
+  if (!authEnabled || !supabaseClient) return {};
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+  return session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+}
+
+async function initializeSupabaseAuth() {
+  if (!authEnabled) return;
+
+  if (!supabaseClient) {
+    showLoginGate(text("supabaseMissing"));
+    return;
+  }
+
+  const {
+    data: { user },
+    error
+  } = await supabaseClient.auth.getUser();
+
+  if (user && !error) {
+    applyAuthenticatedUser(user, { persist: false });
+  } else {
+    showLoginGate();
+  }
+
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
+      applyAuthenticatedUser(session.user, { persist: false });
+    }
+    if (event === "SIGNED_OUT") {
+      localStorage.removeItem(storageKeys.authUser);
+      state.currentUser = null;
+      showLoginGate();
+    }
+  });
+}
+
 function loadAppState() {
   try {
     const savedLang = localStorage.getItem(storageKeys.lang);
     const savedRole = localStorage.getItem(storageKeys.role);
+    const savedAuthUser = JSON.parse(localStorage.getItem(storageKeys.authUser) || "null");
     const savedProfile = JSON.parse(localStorage.getItem(storageKeys.profile) || "null");
     const savedBookings = JSON.parse(localStorage.getItem(storageKeys.bookings) || "[]");
 
     if (savedLang === "zh" || savedLang === "ko") state.lang = savedLang;
     if (savedRole === "seeker" || savedRole === "agent") state.role = savedRole;
+    if (savedAuthUser?.email) state.currentUser = savedAuthUser;
     if (savedProfile?.seeker && savedProfile?.agent) state.profile = savedProfile;
     if (Array.isArray(savedBookings)) state.bookings = savedBookings;
   } catch {
@@ -1072,6 +1773,7 @@ function renderRoleUI() {
   elements.profileContact.placeholder = state.role === "agent" ? text("agentContactPlaceholder") : text("contactPlaceholder");
   elements.saveProfile.innerHTML = `<i data-lucide="save"></i>${state.role === "agent" ? text("saveProfileAgent") : text("saveProfileSeeker")}`;
   elements.profileStatus.textContent = `${text("currentRole")}：${getRoleText()}${profile.name ? ` · ${profile.name}` : ""}`;
+  renderAuthUser();
 
   if (state.role === "seeker") {
     elements.bookingName.value = profile.name || elements.bookingName.value;
@@ -1463,7 +2165,7 @@ function closeDrawer() {
 function blocksIframe(url) {
   try {
     const host = new URL(url).hostname;
-    return ["new.land.naver.com", "land.naver.com", "map.naver.com", "m.zigbang.com", "www.zigbang.com", "map.kakao.com", "www.google.com"].some(
+    return ["new.land.naver.com", "land.naver.com", "map.naver.com", "m.zigbang.com", "www.zigbang.com", "map.kakao.com", "www.google.com", "seoul.craigslist.org", "craigslist.org"].some(
       (domain) => host === domain || host.endsWith(`.${domain}`)
     );
   } catch {
@@ -1478,6 +2180,7 @@ function getBlockedSourceName(url) {
     if (host.includes("zigbang")) return "직방";
     if (host.includes("kakao")) return "Kakao";
     if (host.includes("google")) return "Google";
+    if (host.includes("craigslist")) return "Craigslist";
   } catch {
     return "对方网站";
   }
@@ -1492,27 +2195,27 @@ function renderBlockedViewer(url, title) {
   elements.siteViewerFallback.innerHTML = `
     <div class="blocked-source-panel">
       <i data-lucide="shield-alert"></i>
-      <h4>${source} 不允许嵌入到 iframe</h4>
-      <p>这类房源/地图网站通常设置了浏览器安全策略，所以不能把原始网页直接塞进你的前端里。要在你的页面里直接显示真实房源，需要后端拿到合法数据源后，再由我们自己的 UI 渲染卡片。</p>
+      <h4>${text("iframeBlockedTitle", { source })}</h4>
+      <p>${text("iframeBlockedBody")}</p>
       <div class="blocked-source-url">${escapeHtml(url)}</div>
       <div class="blocked-source-actions">
         <button class="secondary-button" type="button" data-copy-source-url="${escapeHtml(url)}">
           <i data-lucide="copy"></i>
-          复制原始链接
+          ${text("copyOriginalLink")}
         </button>
         <button class="primary-button" type="button" data-close-source-viewer>
           <i data-lucide="panel-bottom-close"></i>
-          返回站内结果
+          ${text("backToSiteResults")}
         </button>
       </div>
-      <p class="blocked-source-hint">现在的本地接口会返回站内结果卡片；下一步把 <code>server.js</code> 里的 <code>buildListings()</code> 接到真实授权数据源，就能在这里显示逐套房源。</p>
+      <p class="blocked-source-hint">${text("localApiHint")}</p>
     </div>
   `;
 }
 
-function openSiteViewer(url, title = "站内浏览") {
+function openSiteViewer(url, title = text("siteViewerTitle")) {
   if (!url || !elements.siteViewerFrame) return;
-  elements.siteViewerTitle.textContent = title.trim() || "站内浏览";
+  elements.siteViewerTitle.textContent = title.trim() || text("siteViewerTitle");
   elements.siteViewerUrl.textContent = url;
   if (blocksIframe(url)) {
     renderBlockedViewer(url, title);
@@ -1586,7 +2289,11 @@ function normalizeRealListings(payload) {
 }
 
 async function fetchJson(path) {
-  const response = await fetch(path, { headers: { Accept: "application/json" } });
+  const headers = { Accept: "application/json" };
+  if (String(path).startsWith("/api/")) {
+    Object.assign(headers, await getAuthHeaders());
+  }
+  const response = await fetch(path, { headers });
   if (!response.ok) throw new Error(`${path} returned ${response.status}`);
   return response.json();
 }
@@ -1684,33 +2391,40 @@ async function searchStaticListings(params) {
 
 function formatWan(value) {
   if (value === null || value === undefined || value === "") return "";
-  return `${Number(value).toLocaleString("ko-KR")}万`;
+  return `${Number(value).toLocaleString("ko-KR")}${text("wanUnit")}`;
 }
 
 function renderListingInsights(item) {
   const cards = [];
 
   if (item.safety) {
-    const riskLabel = { low: "较低", medium: "中等", high: "偏高" }[item.safety.riskLevel] || "参考";
+    const riskLabel =
+      { low: text("riskLow"), medium: text("riskMedium"), high: text("riskHigh") }[item.safety.riskLevel] ||
+      text("riskReference");
     cards.push(`
       <div class="insight-card ${escapeHtml(item.safety.riskLevel)}">
-        <span>安全参考</span>
+        <span>${text("safetyReferenceTitle")}</span>
         <strong>${riskLabel} · ${escapeHtml(item.safety.safetyScore)}/100</strong>
-        <small>总案件 ${Number(item.safety.totalCases).toLocaleString("ko-KR")} · 强力 ${Number(item.safety.violentCases).toLocaleString("ko-KR")}</small>
+        <small>${text("safetyCases", {
+          total: Number(item.safety.totalCases).toLocaleString("ko-KR"),
+          violent: Number(item.safety.violentCases).toLocaleString("ko-KR")
+        })}</small>
       </div>
     `);
   }
 
   if (item.rentMarket) {
     const comparison = item.rentComparison
-      ? { below: "低于行情", near: "接近行情", above: "高于行情" }[item.rentComparison.label]
-      : "行情参考";
-    const diffText = item.rentComparison ? ` · ${item.rentComparison.diff > 0 ? "+" : ""}${item.rentComparison.diff}万 (${item.rentComparison.pct > 0 ? "+" : ""}${item.rentComparison.pct}%)` : "";
+      ? { below: text("belowMarket"), near: text("nearMarket"), above: text("aboveMarket") }[item.rentComparison.label]
+      : text("marketReference");
+    const diffText = item.rentComparison
+      ? ` · ${item.rentComparison.diff > 0 ? "+" : ""}${item.rentComparison.diff}${text("wanUnit")} (${item.rentComparison.pct > 0 ? "+" : ""}${item.rentComparison.pct}%)`
+      : "";
     cards.push(`
       <div class="insight-card market">
-        <span>租金行情</span>
-        <strong>中位月租 ${formatWan(item.rentMarket.medianMonthlyRent)}</strong>
-        <small>${comparison}${diffText} · 押金中位 ${formatWan(item.rentMarket.medianMonthlyDeposit)}</small>
+        <span>${text("rentMarketTitle")}</span>
+        <strong>${text("medianMonthlyRentValue", { rent: formatWan(item.rentMarket.medianMonthlyRent) })}</strong>
+        <small>${comparison}${diffText} · ${text("medianDepositValue", { deposit: formatWan(item.rentMarket.medianMonthlyDeposit) })}</small>
       </div>
     `);
   }
@@ -1718,9 +2432,12 @@ function renderListingInsights(item) {
   if (item.saleMarket) {
     cards.push(`
       <div class="insight-card sale">
-        <span>买卖行情</span>
-        <strong>成交中位 ${formatWan(item.saleMarket.medianSalePrice)}</strong>
-        <small>${Number(item.saleMarket.transactionCount).toLocaleString("ko-KR")}笔 · ${escapeHtml(item.saleMarket.sourcePeriod)}</small>
+        <span>${text("saleMarketTitle")}</span>
+        <strong>${text("medianSaleValue", { price: formatWan(item.saleMarket.medianSalePrice) })}</strong>
+        <small>${text("saleTransactionMeta", {
+          count: Number(item.saleMarket.transactionCount).toLocaleString("ko-KR"),
+          period: escapeHtml(item.saleMarket.sourcePeriod)
+        })}</small>
       </div>
     `);
   }
@@ -1730,8 +2447,8 @@ function renderListingInsights(item) {
 }
 
 function renderRealListingCard(item) {
-  const title = escapeHtml(item.title || item.name || "이름 없는 매물");
-  const source = escapeHtml(item.sourceName || item.source || "Real source");
+  const title = escapeHtml(item.title || item.name || text("unnamedRealListing"));
+  const source = escapeHtml(item.sourceName || item.source || text("realSource"));
   const address = escapeHtml(item.address || item.location || item.area || "");
   const roomType = escapeHtml(item.roomType || item.room || "");
   const rent = item.monthlyRent ?? item.rent ?? item.price ?? "";
@@ -1747,10 +2464,10 @@ function renderRealListingCard(item) {
       <div class="real-listing-body">
         <div class="listing-title-row">
           <h4>${title}</h4>
-          <div class="price">${rent ? `월세 ${escapeHtml(rent)}만` : "가격 확인 필요"}</div>
+          <div class="price">${rent ? text("realMonthlyRent", { rent: escapeHtml(rent) }) : text("priceCheckNeeded")}</div>
         </div>
         <div class="meta-row">
-          ${deposit ? `<span><i data-lucide="key-round"></i>보증금 ${escapeHtml(deposit)}만</span>` : ""}
+          ${deposit ? `<span><i data-lucide="key-round"></i>${text("realDeposit", { deposit: escapeHtml(deposit) })}</span>` : ""}
           ${roomType ? `<span><i data-lucide="building-2"></i>${roomType}</span>` : ""}
           ${address ? `<span><i data-lucide="map-pin"></i>${address}</span>` : ""}
           ${updatedAt ? `<span><i data-lucide="clock"></i>${updatedAt}</span>` : ""}
@@ -1760,7 +2477,7 @@ function renderRealListingCard(item) {
           ${tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
         </div>
         ${renderListingInsights(item)}
-        ${url ? `<button class="secondary-button" type="button" data-open-real-url="${url}"><i data-lucide="panel-top-open"></i>查看来源与检索条件</button>` : ""}
+        ${url ? `<button class="secondary-button" type="button" data-open-real-url="${url}"><i data-lucide="panel-top-open"></i>${text("viewSourceConditions")}</button>` : ""}
       </div>
     </article>
   `;
@@ -1768,28 +2485,28 @@ function renderRealListingCard(item) {
 
 function renderRealSearchFallback(params, reason = "") {
   const query = params.query;
-  elements.realSearchStatus.textContent = "需要接入接口";
+  elements.realSearchStatus.textContent = text("needApiStatus");
   elements.realResults.innerHTML = `
     <div class="real-empty-state">
-      <strong>还没有可用的真实房源接口</strong>
-      <p>前端已经会请求 <code>${realListingsEndpoint}</code>。接入后端后，这里会直接显示真实房源卡片，而不是跳转外部平台。</p>
+      <strong>${text("noRealApiTitle")}</strong>
+      <p>${text("noRealApiBody", { endpoint: `<code>${realListingsEndpoint}</code>` })}</p>
       ${reason ? `<p class="real-error">${escapeHtml(reason)}</p>` : ""}
       <div class="real-source-actions">
         <a class="secondary-button link-button real-source naver-land" href="${getNaverMapUrl(query)}" target="_blank" rel="noopener noreferrer">
           <i data-lucide="navigation"></i>
-          在站内查 Naver 地图
+          ${text("inSiteNaverMap")}
         </a>
         <a class="secondary-button link-button" href="${getMapUrl("kakao", query)}" target="_blank" rel="noopener noreferrer">
           <i data-lucide="map-pinned"></i>
-          在站内查 Kakao
+          ${text("inSiteKakao")}
         </a>
         <a class="secondary-button link-button" href="${getMapUrl("google", query)}" target="_blank" rel="noopener noreferrer">
           <i data-lucide="globe-2"></i>
-          在站内查 Google
+          ${text("inSiteGoogle")}
         </a>
       </div>
       <details class="api-contract">
-        <summary>后端需要返回的数据格式</summary>
+        <summary>${text("apiContractSummary")}</summary>
         <pre>{
   "listings": [
     {
@@ -1813,13 +2530,15 @@ function renderRealSearchFallback(params, reason = "") {
 
 async function searchRealListings() {
   const params = getRealSearchParams();
-  elements.realSearchStatus.textContent = "搜索中";
-  elements.realResults.innerHTML = `<div class="empty-state">正在读取真实房源...</div>`;
+  elements.realSearchStatus.textContent = text("realSearchLoading");
+  elements.realResults.innerHTML = `<div class="empty-state">${text("realSearchReading")}</div>`;
 
   try {
     let listingsFromApi = [];
     try {
-      const response = await fetch(buildRealSearchUrl(params), { headers: { Accept: "application/json" } });
+      const response = await fetch(buildRealSearchUrl(params), {
+        headers: { Accept: "application/json", ...(await getAuthHeaders()) }
+      });
       if (!response.ok) throw new Error(`接口返回 ${response.status}`);
       listingsFromApi = normalizeRealListings(await response.json());
     } catch (apiError) {
@@ -1827,12 +2546,12 @@ async function searchRealListings() {
     }
 
     if (listingsFromApi.length === 0) {
-      elements.realSearchStatus.textContent = "没有结果";
-      elements.realResults.innerHTML = `<div class="empty-state">没有找到符合条件的真实房源，请换一个区域或价位。</div>`;
+      elements.realSearchStatus.textContent = text("realSearchNoResultsStatus");
+      elements.realResults.innerHTML = `<div class="empty-state">${text("realSearchNoResults")}</div>`;
       return;
     }
 
-    elements.realSearchStatus.textContent = `${listingsFromApi.length} 套房源`;
+    elements.realSearchStatus.textContent = text("realSearchCount", { count: listingsFromApi.length });
     elements.realResults.innerHTML = listingsFromApi.map(renderRealListingCard).join("");
     refreshIcons();
   } catch (error) {
@@ -1864,6 +2583,19 @@ function refreshIcons() {
 }
 
 function bindEvents() {
+  if (authEnabled) {
+    elements.loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      authenticateSupabaseUser(elements.loginEmail.value, elements.loginPassword.value);
+    });
+
+    elements.signupButton?.addEventListener("click", () => {
+      registerSupabaseUser(elements.loginEmail.value, elements.loginPassword.value);
+    });
+
+    elements.logoutButton.addEventListener("click", logout);
+  }
+
   elements.langButtons.forEach((button) => {
     button.addEventListener("click", () => {
       setLanguage(button.dataset.lang);
@@ -1962,7 +2694,7 @@ function bindEvents() {
     }
     if (copySourceUrlButton) {
       navigator.clipboard?.writeText(copySourceUrlButton.dataset.copySourceUrl);
-      copySourceUrlButton.innerHTML = `<i data-lucide="check"></i>已复制`;
+      copySourceUrlButton.innerHTML = `<i data-lucide="check"></i>${text("copied")}`;
       refreshIcons();
       return;
     }
@@ -2021,6 +2753,10 @@ function bindEvents() {
   elements.realSearchForm.addEventListener("submit", (event) => {
     event.preventDefault();
     searchRealListings();
+  });
+
+  elements.runFocusSurvey?.addEventListener("click", () => {
+    applySuwonSurveyMode({ autoSearch: true });
   });
 
   document.addEventListener("keydown", (event) => {
@@ -2095,10 +2831,22 @@ function bindEvents() {
 loadAppState();
 bindEvents();
 setLanguage(state.lang);
+if (!authEnabled) {
+  localStorage.removeItem(storageKeys.authUser);
+  state.currentUser = null;
+  enterRole("seeker");
+} else if (state.currentUser) {
+  initializeSupabaseAuth();
+} else {
+  initializeSupabaseAuth();
+}
 setTimeout(() => {
   elements.realResults.innerHTML =
     location.protocol === "file:"
-      ? `<div class="empty-state">当前是 file:// 打开方式，无法读取 /api/listings 和行情数据。请使用 http://127.0.0.1:8001/index.html 打开。</div>`
-      : `<div class="empty-state">选择区域、地点、价位和房型后搜索；房源卡片会显示安全参考、租金行情和买卖行情。</div>`;
+      ? `<div class="empty-state">${text("realInitialFile")}</div>`
+      : `<div class="empty-state">${text("realInitialHttp")}</div>`;
 }, 0);
-elements.realResults.innerHTML = `<div class="empty-state">输入区域、地点、价位和房型后搜索；接入 /api/listings 后这里会直接显示真实房源。</div>`;
+elements.realResults.innerHTML = `<div class="empty-state">${text("realInitialDefault")}</div>`;
+setTimeout(() => {
+  applySuwonSurveyMode({ autoSearch: true });
+}, 50);

@@ -1,0 +1,25 @@
+[
+  {
+    "id": "broker-suwon-skku-001",
+    "title": "Authorized Yuljeon one-room sample",
+    "area": "yuljeon",
+    "school": "sungkyunkwan",
+    "station": "sungkyunkwan university station",
+    "address": "Yuljeon-dong, Jangan-gu, Suwon",
+    "room": "one-room",
+    "roomType": "One-room",
+    "monthlyRent": 0,
+    "deposit": 0,
+    "management": 0,
+    "sourceName": "Authorized broker feed",
+    "url": "https://authorized-broker.example/listing/001",
+    "image": "",
+    "updatedAt": "2026-06-15",
+    "verified": true,
+    "tags": ["authorized", "replace with real broker data"],
+    "keywords": ["sungkyunkwan", "suwon", "yuljeon"],
+    "districtKey": "gyeonggi_suwon",
+    "marketRentKey": "suwon_jangan_yuljeon",
+    "marketSaleKey": "suwon_jangan"
+  }
+]

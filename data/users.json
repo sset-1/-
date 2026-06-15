@@ -1,0 +1,18 @@
+[
+  {
+    "id": "demo-student",
+    "role": "seeker",
+    "name": "Student Demo",
+    "email": "student@hanstay.demo",
+    "password": "demo1234",
+    "contact": "wechat: student-demo"
+  },
+  {
+    "id": "demo-agent",
+    "role": "agent",
+    "name": "HanStay Agent",
+    "email": "agent@hanstay.demo",
+    "password": "demo1234",
+    "contact": "kakao: agent-demo"
+  }
+]
