@@ -27,11 +27,24 @@ create index if not exists bookings_user_id_idx on public.bookings(user_id);
 create index if not exists bookings_status_idx on public.bookings(status);
 create index if not exists bookings_created_at_idx on public.bookings(created_at desc);
 
+create table if not exists public.agent_accounts (
+  email text primary key,
+  created_at timestamptz not null default now()
+);
+
 alter table public.bookings enable row level security;
+alter table public.agent_accounts enable row level security;
 
 drop policy if exists "bookings_insert_own" on public.bookings;
 drop policy if exists "bookings_select_own_or_agent" on public.bookings;
 drop policy if exists "bookings_update_own_or_agent" on public.bookings;
+drop policy if exists "agent_accounts_select_self" on public.agent_accounts;
+
+create policy "agent_accounts_select_self"
+on public.agent_accounts
+for select
+to authenticated
+using (lower(email) = lower(auth.jwt() ->> 'email'));
 
 create policy "bookings_insert_own"
 on public.bookings
@@ -46,6 +59,11 @@ to authenticated
 using (
   auth.uid() = user_id
   or coalesce(auth.jwt() -> 'user_metadata' ->> 'role', 'seeker') = 'agent'
+  or exists (
+    select 1
+    from public.agent_accounts
+    where lower(agent_accounts.email) = lower(auth.jwt() ->> 'email')
+  )
 );
 
 create policy "bookings_update_own_or_agent"
@@ -55,17 +73,32 @@ to authenticated
 using (
   auth.uid() = user_id
   or coalesce(auth.jwt() -> 'user_metadata' ->> 'role', 'seeker') = 'agent'
+  or exists (
+    select 1
+    from public.agent_accounts
+    where lower(agent_accounts.email) = lower(auth.jwt() ->> 'email')
+  )
 )
 with check (
   auth.uid() = user_id
   or coalesce(auth.jwt() -> 'user_metadata' ->> 'role', 'seeker') = 'agent'
+  or exists (
+    select 1
+    from public.agent_accounts
+    where lower(agent_accounts.email) = lower(auth.jwt() ->> 'email')
+  )
 );
 
 -- Optional: if you want instant cross-device updates without refreshing,
 -- enable Realtime for this table in Supabase Dashboard:
 -- Database > Replication > supabase_realtime > bookings.
 
--- To make a staff/agent account see every student's request, update that user's metadata:
+-- To make a staff/agent account see every student's request, add the account email here:
+-- insert into public.agent_accounts(email)
+-- values ('agent@example.com')
+-- on conflict (email) do nothing;
+
+-- Alternative: update that user's auth metadata:
 -- update auth.users
 -- set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) || '{"role":"agent"}'::jsonb
 -- where email = 'agent@example.com';

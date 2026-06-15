@@ -1541,16 +1541,30 @@ function showRoleGate() {
   refreshIcons();
 }
 
-function getSessionUser(user) {
+function getSessionUser(user, roleOverride = "") {
   const metadata = user.user_metadata || {};
   const email = user.email || "";
   return {
     id: user.id,
-    role: metadata.role === "agent" ? "agent" : "seeker",
+    role: roleOverride === "agent" || metadata.role === "agent" ? "agent" : "seeker",
     name: metadata.full_name || metadata.name || email.split("@")[0] || "HanStay User",
     email,
     contact: metadata.contact || email
   };
+}
+
+async function getSupabaseUserRole(user) {
+  if (user.user_metadata?.role === "agent") return "agent";
+  if (!supabaseClient || !user.email) return "seeker";
+
+  const { data, error } = await supabaseClient
+    .from("agent_accounts")
+    .select("email")
+    .eq("email", user.email.toLowerCase())
+    .maybeSingle();
+
+  if (error) return "seeker";
+  return data?.email ? "agent" : "seeker";
 }
 
 function renderAuthUser() {
@@ -1580,13 +1594,13 @@ function showLoginGate(message = "") {
   refreshIcons();
 }
 
-function applyAuthenticatedUser(user, options = {}) {
+async function applyAuthenticatedUser(user, options = {}) {
   if (!authEnabled) {
     enterRole("seeker");
     return;
   }
   const { persist = true } = options;
-  const sessionUser = getSessionUser(user);
+  const sessionUser = getSessionUser(user, await getSupabaseUserRole(user));
   state.currentUser = sessionUser;
   state.role = sessionUser.role;
   state.profile[sessionUser.role] = {
@@ -1619,7 +1633,7 @@ async function authenticateSupabaseUser(email, password) {
   }
 
   elements.loginResult.textContent = "";
-  if (data.user) applyAuthenticatedUser(data.user);
+  if (data.user) await applyAuthenticatedUser(data.user);
 }
 
 async function registerSupabaseUser(email, password) {
@@ -1651,7 +1665,7 @@ async function registerSupabaseUser(email, password) {
 
   if (data.session && data.user) {
     elements.loginResult.textContent = "";
-    applyAuthenticatedUser(data.user);
+    await applyAuthenticatedUser(data.user);
   } else {
     elements.loginResult.textContent = text("signupConfirmation");
   }
@@ -1688,7 +1702,7 @@ async function initializeSupabaseAuth() {
   } = await supabaseClient.auth.getUser();
 
   if (user && !error) {
-    applyAuthenticatedUser(user, { persist: false });
+    await applyAuthenticatedUser(user, { persist: false });
     await loadRemoteBookings();
     startBookingRealtime();
   } else {
@@ -1697,7 +1711,7 @@ async function initializeSupabaseAuth() {
 
   supabaseClient.auth.onAuthStateChange(async (event, session) => {
     if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
-      applyAuthenticatedUser(session.user, { persist: false });
+      await applyAuthenticatedUser(session.user, { persist: false });
       await loadRemoteBookings();
       startBookingRealtime();
     }

@@ -40,7 +40,17 @@ Student accounts can read their own requests. Agent accounts can read all reques
 { "role": "agent" }
 ```
 
-You can set this in Supabase dashboard, or run the commented `update auth.users ...` example at the bottom of `SUPABASE_BOOKINGS.sql`.
+The easier way is to add the agent phone/account email to `public.agent_accounts`:
+
+```sql
+insert into public.agent_accounts(email)
+values ('agent@example.com')
+on conflict (email) do nothing;
+```
+
+After adding it, log out and log back in on the phone. The app will automatically enter the agent workspace and show all booking tasks.
+
+You can also set auth metadata manually, or run the commented `update auth.users ...` example at the bottom of `SUPABASE_BOOKINGS.sql`.
 
 ## Local Server
 
