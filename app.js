@@ -683,6 +683,11 @@ Object.assign(translations.zh, {
   signupFailed: "注册失败。",
   signupConfirmation: "注册成功。请先去邮箱确认账号，然后再回来登录。",
   loggedOut: "已退出登录。",
+  bookingCloudSyncing: "正在同步到云端...",
+  bookingCloudSaved: "{name}，预约已保存到 Supabase。其他设备登录后也能看到。",
+  bookingCloudSaveFailed: "预约已暂存在本机，但云端同步失败。请先在 Supabase 运行 SUPABASE_BOOKINGS.sql。",
+  bookingCloudLoadFailed: "云端预约读取失败，暂时显示本机缓存。",
+  bookingCloudUpdateFailed: "云端更新失败，请检查 Supabase bookings 表和权限规则。",
   wanUnit: "万",
   perMonthShort: "月",
   focusSurveyEyebrow: "Suwon SKKU Survey",
@@ -810,6 +815,11 @@ Object.assign(translations.ko, {
   signupFailed: "가입에 실패했습니다.",
   signupConfirmation: "가입이 완료되었습니다. 이메일 인증 후 다시 로그인하세요.",
   loggedOut: "로그아웃되었습니다.",
+  bookingCloudSyncing: "클라우드에 동기화하는 중...",
+  bookingCloudSaved: "{name}님의 예약이 Supabase에 저장되었습니다. 다른 기기에서도 로그인 후 볼 수 있습니다.",
+  bookingCloudSaveFailed: "예약은 이 기기에 임시 저장되었지만 클라우드 동기화에 실패했습니다. Supabase에서 SUPABASE_BOOKINGS.sql을 먼저 실행하세요.",
+  bookingCloudLoadFailed: "클라우드 예약을 불러오지 못해 이 기기의 캐시를 표시합니다.",
+  bookingCloudUpdateFailed: "클라우드 업데이트에 실패했습니다. Supabase bookings 테이블과 권한 규칙을 확인하세요.",
   wanUnit: "만",
   perMonthShort: "월",
   focusSurveyEyebrow: "Suwon SKKU Survey",
@@ -956,6 +966,8 @@ const supabaseClient =
   authEnabled && window.supabase && supabaseSettings.url && supabaseSettings.publishableKey
     ? window.supabase.createClient(supabaseSettings.url, supabaseSettings.publishableKey)
     : null;
+const supabaseBookingsTable = supabaseSettings.bookingsTable || "bookings";
+let bookingRealtimeChannel = null;
 const suwonSurveyMode = {
   enabled: true,
   areaSelect: "成均馆大学 水原 栗田",
@@ -1646,6 +1658,7 @@ async function registerSupabaseUser(email, password) {
 }
 
 async function logout() {
+  await stopBookingRealtime();
   if (supabaseClient) await supabaseClient.auth.signOut();
   localStorage.removeItem(storageKeys.authUser);
   state.currentUser = null;
@@ -1676,17 +1689,24 @@ async function initializeSupabaseAuth() {
 
   if (user && !error) {
     applyAuthenticatedUser(user, { persist: false });
+    await loadRemoteBookings();
+    startBookingRealtime();
   } else {
     showLoginGate();
   }
 
-  supabaseClient.auth.onAuthStateChange((event, session) => {
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
     if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
       applyAuthenticatedUser(session.user, { persist: false });
+      await loadRemoteBookings();
+      startBookingRealtime();
     }
     if (event === "SIGNED_OUT") {
+      await stopBookingRealtime();
       localStorage.removeItem(storageKeys.authUser);
       state.currentUser = null;
+      state.bookings = [];
+      saveBookings();
       showLoginGate();
     }
   });
@@ -1717,6 +1737,168 @@ function saveProfileState() {
 
 function saveBookings() {
   localStorage.setItem(storageKeys.bookings, JSON.stringify(state.bookings));
+}
+
+function getBookingUserId(booking = {}) {
+  return booking.userId || state.currentUser?.id || "";
+}
+
+function bookingFromSupabaseRow(row) {
+  return {
+    id: row.id,
+    userId: row.user_id || "",
+    requesterEmail: row.requester_email || "",
+    listingId: row.listing_id || "",
+    listingTitle: row.listing_title || text("defaultListing"),
+    schoolName: row.school_name || "",
+    requesterName: row.requester_name || "",
+    requesterContact: row.requester_contact || "",
+    budget: row.budget || "",
+    moveIn: row.move_in || "",
+    notes: row.notes || "",
+    status: row.status || "pending",
+    agentName: row.agent_name || "",
+    agentContact: row.agent_contact || "",
+    agentNote: row.agent_note || "",
+    meetingUrl: row.meeting_url || "",
+    createdAt: row.created_at || new Date().toISOString(),
+    updatedAt: row.updated_at || row.created_at || new Date().toISOString()
+  };
+}
+
+function bookingToSupabaseRow(booking) {
+  return {
+    id: String(booking.id),
+    user_id: getBookingUserId(booking),
+    requester_email: booking.requesterEmail || state.currentUser?.email || "",
+    listing_id: String(booking.listingId || ""),
+    listing_title: booking.listingTitle || text("defaultListing"),
+    school_name: booking.schoolName || "",
+    requester_name: booking.requesterName || "",
+    requester_contact: booking.requesterContact || "",
+    budget: booking.budget || "",
+    move_in: booking.moveIn || null,
+    notes: booking.notes || "",
+    status: booking.status || "pending",
+    agent_name: booking.agentName || "",
+    agent_contact: booking.agentContact || "",
+    agent_note: booking.agentNote || "",
+    meeting_url: booking.meetingUrl || "",
+    created_at: booking.createdAt || new Date().toISOString(),
+    updated_at: booking.updatedAt || new Date().toISOString()
+  };
+}
+
+function bookingPatchToSupabaseRow(patch) {
+  const row = {};
+  if ("status" in patch) row.status = patch.status;
+  if ("agentName" in patch) row.agent_name = patch.agentName;
+  if ("agentContact" in patch) row.agent_contact = patch.agentContact;
+  if ("agentNote" in patch) row.agent_note = patch.agentNote;
+  if ("meetingUrl" in patch) row.meeting_url = patch.meetingUrl;
+  row.updated_at = patch.updatedAt || new Date().toISOString();
+  return row;
+}
+
+function canUseRemoteBookings() {
+  return Boolean(authEnabled && supabaseClient && state.currentUser?.id);
+}
+
+function getLocalBookingsToMigrate(remoteIds) {
+  if (state.role !== "seeker" || !state.currentUser?.id) return [];
+  return state.bookings.filter((booking) => {
+    if (!booking?.id || remoteIds.has(booking.id)) return false;
+    if (booking.userId && booking.userId !== state.currentUser.id) return false;
+    if (booking.requesterEmail && booking.requesterEmail !== state.currentUser.email) return false;
+    return Boolean(booking.requesterName && booking.requesterContact && booking.listingId);
+  });
+}
+
+async function loadRemoteBookings() {
+  if (!canUseRemoteBookings()) return;
+  const cachedBookings = [...state.bookings];
+
+  const { data, error } = await supabaseClient
+    .from(supabaseBookingsTable)
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.warn("Failed to load Supabase bookings", error);
+    if (elements.bookingResult) elements.bookingResult.textContent = text("bookingCloudLoadFailed");
+    renderBookingDashboard();
+    return;
+  }
+
+  const remoteBookings = Array.isArray(data) ? data.map(bookingFromSupabaseRow) : [];
+  const remoteIds = new Set(remoteBookings.map((booking) => booking.id));
+  const localBookingsToMigrate = getLocalBookingsToMigrate(remoteIds);
+  const migratedBookings = [];
+
+  for (const localBooking of localBookingsToMigrate) {
+    try {
+      const migrated = await createRemoteBooking({
+        ...localBooking,
+        userId: state.currentUser.id,
+        requesterEmail: state.currentUser.email
+      });
+      migratedBookings.push(migrated);
+    } catch (migrationError) {
+      console.warn("Failed to migrate local booking to Supabase", migrationError);
+    }
+  }
+
+  state.bookings = [...migratedBookings, ...remoteBookings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  if (state.bookings.length === 0 && cachedBookings.length > 0 && localBookingsToMigrate.length === 0) {
+    state.bookings = cachedBookings;
+  }
+  saveBookings();
+  renderBookingDashboard();
+}
+
+async function createRemoteBooking(booking) {
+  if (!canUseRemoteBookings()) return booking;
+
+  const { data, error } = await supabaseClient
+    .from(supabaseBookingsTable)
+    .insert(bookingToSupabaseRow(booking))
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data ? bookingFromSupabaseRow(data) : booking;
+}
+
+async function updateRemoteBooking(bookingId, patch) {
+  if (!canUseRemoteBookings()) return null;
+
+  const { data, error } = await supabaseClient
+    .from(supabaseBookingsTable)
+    .update(bookingPatchToSupabaseRow(patch))
+    .eq("id", bookingId)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data ? bookingFromSupabaseRow(data) : null;
+}
+
+function startBookingRealtime() {
+  if (!canUseRemoteBookings() || !supabaseClient.channel || bookingRealtimeChannel) return;
+  bookingRealtimeChannel = supabaseClient
+    .channel("hanstay-bookings")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: supabaseBookingsTable },
+      () => loadRemoteBookings()
+    )
+    .subscribe();
+}
+
+async function stopBookingRealtime() {
+  if (!bookingRealtimeChannel || !supabaseClient) return;
+  await supabaseClient.removeChannel(bookingRealtimeChannel);
+  bookingRealtimeChannel = null;
 }
 
 function getRoleText(role = state.role) {
@@ -1789,8 +1971,14 @@ function getVisibleBookingsForRole() {
   if (state.role === "agent") return [...state.bookings];
 
   const contact = state.profile.seeker.contact.trim();
-  if (!contact) return [...state.bookings];
-  return state.bookings.filter((booking) => booking.requesterContact === contact);
+  const userId = state.currentUser?.id || "";
+  const email = state.currentUser?.email || "";
+  return state.bookings.filter((booking) => {
+    if (userId && booking.userId === userId) return true;
+    if (email && booking.requesterEmail === email) return true;
+    if (contact && booking.requesterContact === contact) return true;
+    return !booking.userId && !booking.requesterEmail && !contact;
+  });
 }
 
 function renderBookingDashboard() {
@@ -1931,10 +2119,27 @@ function renderBookingActions(booking, isAgent) {
   return "";
 }
 
-function updateBooking(bookingId, patch) {
-  state.bookings = state.bookings.map((booking) => (booking.id === bookingId ? { ...booking, ...patch, updatedAt: new Date().toISOString() } : booking));
+async function updateBooking(bookingId, patch) {
+  const previousBookings = [...state.bookings];
+  const nextPatch = { ...patch, updatedAt: new Date().toISOString() };
+  state.bookings = state.bookings.map((booking) => (booking.id === bookingId ? { ...booking, ...nextPatch } : booking));
   saveBookings();
   renderBookingDashboard();
+
+  try {
+    const savedBooking = await updateRemoteBooking(bookingId, nextPatch);
+    if (savedBooking) {
+      state.bookings = state.bookings.map((booking) => (booking.id === bookingId ? savedBooking : booking));
+      saveBookings();
+      renderBookingDashboard();
+    }
+  } catch (error) {
+    console.warn("Failed to update Supabase booking", error);
+    state.bookings = previousBookings;
+    saveBookings();
+    renderBookingDashboard();
+    if (elements.bookingResult) elements.bookingResult.textContent = text("bookingCloudUpdateFailed");
+  }
 }
 
 function getFilteredListings() {
@@ -2788,12 +2993,14 @@ function bindEvents() {
     renderListings();
   });
 
-  elements.bookingForm.addEventListener("submit", (event) => {
+  elements.bookingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(elements.bookingForm).entries());
     const listing = listings.find((item) => item.id === Number(data.listingId));
     const booking = {
       id: `BK-${Date.now()}`,
+      userId: state.currentUser?.id || "",
+      requesterEmail: state.currentUser?.email || "",
       listingId: data.listingId,
       listingTitle: listing ? localizedListing(listing, "title") : text("defaultListing"),
       schoolName: listing ? localizedListing(listing, "schoolName") : "",
@@ -2812,6 +3019,7 @@ function bindEvents() {
     };
 
     state.bookings.unshift(booking);
+    elements.bookingResult.textContent = text("bookingCloudSyncing");
     state.role = "seeker";
     state.profile.seeker = {
       name: booking.requesterName,
@@ -2819,12 +3027,22 @@ function bindEvents() {
     };
     saveProfileState();
     saveBookings();
-    elements.bookingResult.textContent = text("bookingSubmitted", { name: data.name });
     elements.bookingForm.reset();
     elements.bookingListing.value = String(listings[0].id);
     renderRoleUI();
     setActiveView("bookings");
     elements.bookingDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    try {
+      const savedBooking = await createRemoteBooking(booking);
+      state.bookings = state.bookings.map((item) => (item.id === booking.id ? savedBooking : item));
+      saveBookings();
+      renderRoleUI();
+      elements.bookingResult.textContent = text("bookingCloudSaved", { name: data.name });
+    } catch (error) {
+      console.warn("Failed to create Supabase booking", error);
+      elements.bookingResult.textContent = text("bookingCloudSaveFailed");
+    }
   });
 }
 

@@ -24,6 +24,24 @@ In Supabase:
 3. Decide whether email confirmation is required.
 4. Create users from the app registration form, or from the Supabase dashboard.
 
+## Shared Viewing Requests
+
+Login alone only identifies the user. To make booking/viewing requests visible across devices, create the shared database table:
+
+1. Open Supabase SQL Editor.
+2. Paste and run `SUPABASE_BOOKINGS.sql`.
+3. Refresh the app and log in again.
+
+After that, new viewing requests are saved to Supabase `public.bookings` instead of only this browser's `localStorage`.
+
+Student accounts can read their own requests. Agent accounts can read all requests when their user metadata contains:
+
+```json
+{ "role": "agent" }
+```
+
+You can set this in Supabase dashboard, or run the commented `update auth.users ...` example at the bottom of `SUPABASE_BOOKINGS.sql`.
+
 ## Local Server
 
 Normal mode, API remains public:
