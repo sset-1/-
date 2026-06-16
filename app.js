@@ -30,7 +30,7 @@ const listings = [
         "네이버 부동산과 직방에서 연세대, 신촌역 주변 원룸 월세 매물을 바로 확인하는 검색 프리셋입니다. 실제 매물 가격과 공실 여부는 외부 플랫폼에서 실시간으로 확인하세요."
     },
     description:
-      "这是连接 Naver 부동산 和 직방 的真实平台搜索入口，用于查看延世大学、新村站周边 One-room 月租房源。实际价格、空房和图片以外部平台为准。"
+      "这是连接 Naver 房产和 Zigbang 的真实平台搜索入口，用于查看延世大学、新村站周边 One-room 月租房源。实际价格、空房和图片以外部平台为准。"
   },
   {
     id: 2,
@@ -63,7 +63,7 @@ const listings = [
         "네이버 부동산과 직방에서 고려대, 안암역 주변 투룸 월세 매물을 확인하는 검색 프리셋입니다. 합법적인 외부 링크로 최신 매물 화면을 엽니다."
     },
     description:
-      "这是高丽大学、安岩站周边 Two-room 的真实平台检索入口。适合找合租房时先去 Naver 부동산 / 직방 看实时房源，再提交视频代看。"
+      "这是高丽大学、安岩站周边 Two-room 的真实平台检索入口。适合找合租房时先去 Naver 房产 / Zigbang 看实时房源，再提交视频代看。"
   },
   {
     id: 3,
@@ -96,7 +96,7 @@ const listings = [
         "서울대입구역 주변 고시원과 원룸을 네이버 부동산, 직방에서 확인하는 외부 검색 링크입니다. 단기 거주와 저보증금 조건은 플랫폼에서 필터링하세요."
     },
     description:
-      "这是首尔大入口站周边考试院 / 低预算房源的真实平台入口。页面内只保存搜索条件，真实房源列表在 Naver 부동산 / 직방 实时打开。"
+      "这是首尔大入口站周边考试院 / 低预算房源的真实平台入口。页面内只保存搜索条件，真实房源列表会在 Naver 房产 / Zigbang 实时打开。"
   },
   {
     id: 4,
@@ -129,7 +129,7 @@ const listings = [
         "한양대와 왕십리 생활권의 원룸 월세 매물을 네이버 부동산, 직방에서 바로 여는 검색 프리셋입니다. 조용한 주거지 여부는 영상 투어에서 확인하세요."
     },
     description:
-      "这是汉阳大学、往十里周边 One-room 的真实平台检索入口。可先打开 Naver 부동산 / 직방 看实时房源，再让看房人代看。"
+      "这是汉阳大学、往十里周边 One-room 的真实平台检索入口。可先打开 Naver 房产 / Zigbang 看实时房源，再让看房人代看。"
   },
   {
     id: 5,
@@ -162,7 +162,7 @@ const listings = [
         "홍대입구역 주변 원룸과 오피스텔 매물을 외부 플랫폼에서 확인하는 검색 프리셋입니다. 야간 소음과 거리 분위기는 영상 투어로 점검하세요."
     },
     description:
-      "这是弘大入口站周边 One-room / 오피스텔 的真实平台入口。房源详情由 Naver 부동산 / 직방 提供，本应用负责筛选、预约和代看流程。"
+      "这是弘大入口站周边 One-room / Officetel 的真实平台入口。房源详情由 Naver 房产 / Zigbang 提供，本应用负责筛选、预约和代看流程。"
   },
   {
     id: 6,
@@ -195,7 +195,7 @@ const listings = [
         "서울대, 낙성대역 주변 투룸 월세를 네이버 부동산과 직방에서 확인하는 검색 프리셋입니다. 실제 채광과 방음은 영상 투어에서 점검하세요."
     },
     description:
-      "这是首尔大学、落星垈站周边 Two-room 的真实平台检索入口。适合两人合租前先比较 Naver 부동산 / 직방 实时房源。"
+      "这是首尔大学、落星垈站周边 Two-room 的真实平台检索入口。适合两人合租前先比较 Naver 房产 / Zigbang 实时房源。"
   }
 ];
 
@@ -347,7 +347,6 @@ const translations = {
     navBookings: "预约中心",
     navAgentBookings: "看房任务",
     navAdminReview: "审核后台",
-    navMaps: "外部地图",
     navGuides: "便利知识",
     openBooking: "预约视频看房",
     summaryListings: "平台入口",
@@ -355,7 +354,7 @@ const translations = {
     summaryScheduled: "已安排视频",
     summaryCompleted: "已完成看房",
     listingsTitle: "真实房源入口",
-    listingsCopy: "按学校、预算和房型生成 Naver 부동산 / 직방 实时检索入口；本页不复制平台房源数据。",
+    listingsCopy: "按学校、预算、房型和地址生成 Naver 房产、Zigbang 与地图搜索入口；本页不复制平台房源数据。",
     schoolField: "目标学校",
     rentField: "最高月租",
     rentValue: "{rent} 万韩元以内",
@@ -375,7 +374,6 @@ const translations = {
     distanceSort: "离学校最近",
     availableSort: "最快入住",
     nearbyListings: "学校周边真实平台入口",
-    mapEntry: "看地图入口",
     emptyListings: "暂无匹配入口，放宽预算或取消部分筛选试试。",
     bookingWorkspaceTitle: "预约中心",
     bookingWorkspaceCopySeeker: "找房人提交视频看房需求，并在这里跟踪顾问处理进度。",
@@ -497,12 +495,12 @@ const translations = {
     defaultAgentName: "HanStay 看房顾问",
     defaultAgentContact: "待补充联系方式",
     defaultListing: "未选择入口",
-    prefillingNotes: "想预约视频代看：{title}。我会先在 Naver 부동산 / 직방 里确认具体房源链接，请重点检查采光、水压、噪音和管理费包含项目。",
+    prefillingNotes: "想预约视频代看：{title}。我会先在 Naver 房产 / Zigbang 里确认具体房源链接，请重点检查采光、水压、噪音和管理费包含项目。",
     detail: "检索说明",
     bookThis: "预约代看",
-    naverMap: "Naver地图",
-    naverLand: "Naver 부동산",
-    zigbang: "직방",
+    naverMap: "Naver 地图",
+    naverLand: "Naver 房产",
+    zigbang: "Zigbang",
     liveSource: "实时平台",
     sourceKeyword: "搜索词：{query}",
     openLiveSource: "打开真实房源",
@@ -517,10 +515,8 @@ const translations = {
     drawerMap: "在 Naver 地图查看周边",
     drawerBook: "预约视频代看这个区域",
     realListingNoticeTitle: "真实房源数据说明",
-    realListingNoticeBody: "Naver 부동산 和 직방没有开放普通开发者可直接抓取并复制房源列表的官方接口，所以这里采用合法外链方式打开实时房源。上线时如果拿到平台合作 API，可以替换为服务端同步。",
-    mapsTitle: "外部地图",
-    mapsCopy: "把当前筛选后的区域直接带到 Naver 부동산、직방、Naver / Kakao / Google 地图。",
-    mapPanelTitle: "真实房源与地图入口",
+    realListingNoticeBody: "Naver 房产和 Zigbang 没有开放普通开发者可直接抓取并复制房源列表的官方接口，所以这里采用合法外链方式打开实时房源。上线时如果拿到平台合作 API，可以替换为服务端同步。",
+    listingExternalLinksLabel: "当前条件外部搜索",
     allArea: "全部区域",
     openAreaInMap: "{provider} 打开{area}",
     noMapResults: "没有可打开的外部入口",
@@ -541,9 +537,28 @@ const translations = {
       Hanyang: "汉阳大学",
       SKKU: "水原成均馆"
     },
+    realAreaOptions: [
+      { value: "延世大学 新村", label: "延世大学 / 新村" },
+      { value: "高丽大学 安岩", label: "高丽大学 / 安岩" },
+      { value: "首尔大学 首尔大入口", label: "首尔大学 / 首尔大入口" },
+      { value: "汉阳大学 往十里", label: "汉阳大学 / 往十里" },
+      { value: "弘益大学 弘大入口", label: "弘益大学 / 弘大" },
+      { value: "成均馆大学 惠化", label: "成均馆大学 / 惠化" },
+      { value: "成均馆大学 水原 栗田", label: "成均馆大学 / 水原栗田" },
+      { value: "庆熙大学 回基", label: "庆熙大学 / 回基" },
+      { value: "中央大学 黑石", label: "中央大学 / 黑石" },
+      { value: "建国大学 建大入口", label: "建国大学 / 建大入口" },
+      { value: "梨花女子大学 梨大", label: "梨花女子大学 / 梨大" },
+      { value: "西江大学 新村", label: "西江大学 / 新村" },
+      { value: "韩国外国语大学 外大前", label: "韩国外国语大学 / 外大前" },
+      { value: "东国大学 忠武路", label: "东国大学 / 忠武路" },
+      { value: "国民大学 吉音", label: "国民大学 / 吉音" },
+      { value: "崇实大学 崇实大入口", label: "崇实大学 / 崇实大入口" },
+      { value: "釜山大学 釜山大", label: "釜山大学 / 釜山大" }
+    ],
     providers: {
-      naverLand: "Naver 부동산",
-      zigbang: "직방",
+      naverLand: "Naver 房产",
+      zigbang: "Zigbang",
       naver: "Naver 地图",
       kakao: "Kakao 地图",
       google: "Google Maps"
@@ -574,7 +589,6 @@ const translations = {
     navBookings: "예약 센터",
     navAgentBookings: "투어 업무",
     navAdminReview: "심사 관리자",
-    navMaps: "외부 지도",
     navGuides: "생활 가이드",
     openBooking: "영상 투어 예약",
     summaryListings: "플랫폼 링크",
@@ -602,7 +616,6 @@ const translations = {
     distanceSort: "학교 가까운순",
     availableSort: "빠른 입주순",
     nearbyListings: "학교 주변 실매물 플랫폼",
-    mapEntry: "지도에서 보기",
     emptyListings: "조건에 맞는 플랫폼 링크가 없습니다. 예산을 높이거나 필터를 줄여 보세요.",
     bookingWorkspaceTitle: "예약 센터",
     bookingWorkspaceCopySeeker: "영상 투어 요청을 제출하고 담당자의 처리 상황을 여기에서 확인하세요.",
@@ -745,9 +758,7 @@ const translations = {
     drawerBook: "이 지역 영상 대리 확인 예약",
     realListingNoticeTitle: "실매물 데이터 안내",
     realListingNoticeBody: "네이버 부동산과 직방은 일반 개발자가 매물 목록을 직접 복제해 가져오는 공개 API를 제공하지 않으므로, 여기서는 합법적인 외부 링크로 실시간 매물 화면을 엽니다. 추후 제휴 API를 확보하면 서버 연동으로 바꿀 수 있습니다.",
-    mapsTitle: "외부 지도",
-    mapsCopy: "현재 필터 지역을 네이버 부동산, 직방, 네이버 / 카카오 / Google 지도 검색으로 바로 연결합니다.",
-    mapPanelTitle: "실매물 및 지도 링크",
+    listingExternalLinksLabel: "현재 조건 외부 검색",
     allArea: "전체 지역",
     openAreaInMap: "{provider}에서 {area} 열기",
     noMapResults: "열 수 있는 외부 링크가 없습니다",
@@ -768,6 +779,25 @@ const translations = {
       Hanyang: "한양대학교",
       SKKU: "수원 성균관대"
     },
+    realAreaOptions: [
+      { value: "연세대학교 신촌", label: "연세대학교 / 신촌" },
+      { value: "고려대학교 안암", label: "고려대학교 / 안암" },
+      { value: "서울대학교 서울대입구", label: "서울대학교 / 서울대입구" },
+      { value: "한양대학교 왕십리", label: "한양대학교 / 왕십리" },
+      { value: "홍익대학교 홍대입구", label: "홍익대학교 / 홍대" },
+      { value: "성균관대학교 혜화", label: "성균관대학교 / 혜화" },
+      { value: "성균관대학교 수원 율전", label: "성균관대학교 / 수원 율전" },
+      { value: "경희대학교 회기", label: "경희대학교 / 회기" },
+      { value: "중앙대학교 흑석", label: "중앙대학교 / 흑석" },
+      { value: "건국대학교 건대입구", label: "건국대학교 / 건대입구" },
+      { value: "이화여자대학교 이대", label: "이화여자대학교 / 이대" },
+      { value: "서강대학교 신촌", label: "서강대학교 / 신촌" },
+      { value: "한국외국어대학교 외대앞", label: "한국외국어대학교 / 외대앞" },
+      { value: "동국대학교 충무로", label: "동국대학교 / 충무로" },
+      { value: "국민대학교 길음", label: "국민대학교 / 길음" },
+      { value: "숭실대학교 숭실대입구", label: "숭실대학교 / 숭실대입구" },
+      { value: "부산대학교 부산대", label: "부산대학교 / 부산대" }
+    ],
     providers: {
       naverLand: "네이버 부동산",
       zigbang: "직방",
@@ -836,7 +866,7 @@ Object.assign(translations.zh, {
   focusSurveyEyebrow: "Suwon SKKU Survey",
   focusSurveyTitle: "水原成均馆附近房源调查",
   focusSurveyStatus: "专题模式",
-  focusSurveyLead: "调查范围固定为成均馆大学自然科学校区、성균관대역、栗田洞一带。结果会优先展示本地房源样本、实际租赁行情、安全参考和地图入口。",
+  focusSurveyLead: "调查范围固定为成均馆大学自然科学校区、성균관대역、栗田洞一带。结果会优先展示本地房源样本、实际租赁行情、安全参考和外部搜索入口。",
   focusChipArea: "核心区域：水原市长安区栗田洞",
   focusChipStation: "地铁：성균관대역",
   focusChipSchool: "学校：成均馆大学自然科学校区",
@@ -865,7 +895,7 @@ Object.assign(translations.zh, {
   suwonMapLabel: "水原成均馆 / 栗田洞",
   suwonWorkspaceTitle: "水原成均馆房源调查",
   suwonWorkspaceHeading: "栗田洞 / 성균관대역 房源调查",
-  suwonWorkspaceCopy: "专题范围固定为水原成均馆大学自然科学校区附近，优先看本地样本、实际租赁行情、安全参考和外部地图入口。",
+  suwonWorkspaceCopy: "专题范围固定为水原成均馆大学自然科学校区附近，优先看本地样本、实际租赁行情、安全参考和外部搜索入口。",
   localListingSamples: "本地房源样本",
   monthlyRentSamples: "月租交易样本",
   medianMonthlyRent: "月租中位数",
@@ -879,7 +909,7 @@ Object.assign(translations.zh, {
   authorizedFeedTitle: "授权接口",
   authorizedFeedConfigured: "{count}个已配置",
   authorizedFeedMissing: "未配置",
-  authorizedFeedBody: "本地授权房源 {count} 条。可配置 Naver、직방 或中介授权接口后自动合并显示。",
+  authorizedFeedBody: "本地授权房源 {count} 条。可配置 Naver、Zigbang 或中介授权接口后自动合并显示。",
   rentMarketTitle: "租金行情",
   rentMarketBody: "{source}：押金中位数 {deposit}，交易样本 {count} 件。",
   noRentMarketData: "未找到租赁行情数据。",
@@ -909,13 +939,13 @@ Object.assign(translations.zh, {
   priceCheckNeeded: "价格待确认",
   realMonthlyRent: "月租 {rent}万",
   realDeposit: "保证金 {deposit}万",
-  viewSourceConditions: "查看来源与检索条件",
+  viewSourceConditions: "打开来源页面",
   needApiStatus: "需要接入接口",
   noRealApiTitle: "还没有可用的真实房源接口",
-  noRealApiBody: "前端已经会请求 {endpoint}。接入后端后，这里会直接显示真实房源卡片，而不是跳转外部平台。",
-  inSiteNaverMap: "在站内查 Naver 地图",
-  inSiteKakao: "在站内查 Kakao",
-  inSiteGoogle: "在站内查 Google",
+  noRealApiBody: "前端已经会请求 {endpoint}。接入后端后，这里会直接显示真实房源卡片；未接入时先用下方外部搜索。",
+  inSiteNaverMap: "打开 Naver 地图",
+  inSiteKakao: "打开 Kakao 地图",
+  inSiteGoogle: "打开 Google 地图",
   apiContractSummary: "后端需要返回的数据格式",
   realSearchLoading: "搜索中",
   realSearchReading: "正在读取真实房源...",
@@ -924,15 +954,7 @@ Object.assign(translations.zh, {
   realSearchCount: "{count} 套房源",
   realInitialFile: "现在是 file:// 打开，无法请求 /api/listings。请用 http://127.0.0.1:8001/index.html 打开。",
   realInitialHttp: "选择区域、地点、价位和房型后搜索；房源卡片会显示安全参考、租金行情和买卖行情。",
-  realInitialDefault: "输入区域、地点、价位和房型后搜索；接入 /api/listings 后这里会直接显示真实房源。",
-  siteViewerTitle: "站内浏览",
-  siteViewerNote: "如果对方网站禁止嵌入，下面可能显示为空白或拒绝连接；链接仍会留在本页面内。",
-  iframeBlockedTitle: "{source} 不允许嵌入到 iframe",
-  iframeBlockedBody: "这类房源/地图网站通常设置了浏览器安全策略，所以不能把原始网页直接塞进你的前端里。要在你的页面里直接显示真实房源，需要后端拿到合法数据源后，再由我们自己的 UI 渲染卡片。",
-  copyOriginalLink: "复制原始链接",
-  backToSiteResults: "返回站内结果",
-  localApiHint: "现在的本地接口会返回站内结果卡片；下一步把 server.js 里的 buildListings() 接到真实授权数据源，就能在这里显示逐套房源。",
-  copied: "已复制"
+  realInitialDefault: "输入区域、地点、价位和房型后搜索；接入 /api/listings 后这里会直接显示真实房源。"
 });
 
 Object.assign(translations.ko, {
@@ -1048,13 +1070,13 @@ Object.assign(translations.ko, {
   priceCheckNeeded: "가격 확인 필요",
   realMonthlyRent: "월세 {rent}만",
   realDeposit: "보증금 {deposit}만",
-  viewSourceConditions: "출처와 검색 조건 보기",
+  viewSourceConditions: "원본 페이지 열기",
   needApiStatus: "API 연결 필요",
   noRealApiTitle: "사용 가능한 실매물 API가 아직 없습니다",
-  noRealApiBody: "프런트엔드는 이미 {endpoint}를 요청합니다. 백엔드를 연결하면 외부 플랫폼으로 이동하지 않고 이곳에 실매물 카드를 바로 표시합니다.",
-  inSiteNaverMap: "내부에서 Naver 지도 보기",
-  inSiteKakao: "내부에서 Kakao 보기",
-  inSiteGoogle: "내부에서 Google 보기",
+  noRealApiBody: "프런트엔드는 이미 {endpoint}를 요청합니다. 백엔드를 연결하면 이곳에 실매물 카드를 바로 표시합니다. 연결 전에는 아래 외부 검색을 사용하세요.",
+  inSiteNaverMap: "Naver 지도 열기",
+  inSiteKakao: "Kakao 지도 열기",
+  inSiteGoogle: "Google 지도 열기",
   apiContractSummary: "백엔드가 반환해야 할 데이터 형식",
   realSearchLoading: "검색 중",
   realSearchReading: "실매물을 불러오는 중...",
@@ -1063,15 +1085,7 @@ Object.assign(translations.ko, {
   realSearchCount: "{count}개 매물",
   realInitialFile: "file://로 열려 있어 /api/listings를 요청할 수 없습니다. http://127.0.0.1:8001/index.html 로 열어 주세요.",
   realInitialHttp: "지역, 장소, 가격과 방 유형을 선택한 뒤 검색하세요. 매물 카드에 안전 참고, 임대 시세와 매매 시세가 표시됩니다.",
-  realInitialDefault: "지역, 장소, 가격과 방 유형을 입력한 뒤 검색하세요. /api/listings 연결 후 이곳에 실매물이 바로 표시됩니다.",
-  siteViewerTitle: "내부 보기",
-  siteViewerNote: "상대 사이트가 임베드를 막으면 아래가 빈 화면이거나 연결 거부로 보일 수 있습니다. 링크는 이 페이지 안에 남습니다.",
-  iframeBlockedTitle: "{source}는 iframe 삽입을 허용하지 않습니다",
-  iframeBlockedBody: "이런 매물/지도 사이트는 보통 브라우저 보안 정책을 설정해 원본 페이지를 프런트엔드 안에 직접 넣을 수 없습니다. 페이지 안에서 실매물을 직접 표시하려면 백엔드가 합법적인 데이터 소스를 받은 뒤 자체 UI로 카드를 렌더링해야 합니다.",
-  copyOriginalLink: "원본 링크 복사",
-  backToSiteResults: "내부 결과로 돌아가기",
-  localApiHint: "현재 로컬 API는 내부 결과 카드를 반환합니다. 다음 단계로 server.js의 buildListings()를 실제 제휴 데이터 소스에 연결하면 이곳에 매물을 하나씩 표시할 수 있습니다.",
-  copied: "복사됨"
+  realInitialDefault: "지역, 장소, 가격과 방 유형을 입력한 뒤 검색하세요. /api/listings 연결 후 이곳에 실매물이 바로 표시됩니다."
 });
 
 const realEstateProviders = [
@@ -1176,16 +1190,13 @@ const elements = {
   realRoomInput: document.querySelector("#realRoomInput"),
   realResults: document.querySelector("#realResults"),
   realSearchStatus: document.querySelector("#realSearchStatus"),
+  listingExternalLinks: document.querySelector("#listingExternalLinks"),
   focusSurveyPanel: document.querySelector("#focusSurveyPanel"),
   surveyCardGrid: document.querySelector("#surveyCardGrid"),
   runFocusSurvey: document.querySelector("#runFocusSurvey"),
   pendingCount: document.querySelector("#pendingCount"),
   confirmedCount: document.querySelector("#confirmedCount"),
   completedCount: document.querySelector("#completedCount"),
-  miniMap: document.querySelector("#miniMap"),
-  mapAreaLink: document.querySelector("#mapAreaLink"),
-  mapProviderLinks: document.querySelector("#mapProviderLinks"),
-  mapSchool: document.querySelector("#mapSchool"),
   bookingDashboard: document.querySelector("#bookingDashboard"),
   bookingListing: document.querySelector("#bookingListing"),
   guideList: document.querySelector("#guideList"),
@@ -1214,14 +1225,7 @@ const elements = {
   saveProfile: document.querySelector("#saveProfile"),
   detailDrawer: document.querySelector("#detailDrawer"),
   drawerBackdrop: document.querySelector("#drawerBackdrop"),
-  drawerContent: document.querySelector("#drawerContent"),
-  siteViewer: document.querySelector("#siteViewer"),
-  siteViewerBackdrop: document.querySelector("#siteViewerBackdrop"),
-  siteViewerFrame: document.querySelector("#siteViewerFrame"),
-  siteViewerFallback: document.querySelector("#siteViewerFallback"),
-  siteViewerTitle: document.querySelector("#siteViewerTitle"),
-  siteViewerUrl: document.querySelector("#siteViewerUrl"),
-  reloadSiteViewer: document.querySelector("#reloadSiteViewer")
+  drawerContent: document.querySelector("#drawerContent")
 };
 
 function text(key, params = {}) {
@@ -1288,10 +1292,6 @@ const viewCopy = {
     eyebrow: "Admin Review",
     title: "房源审核"
   },
-  maps: {
-    eyebrow: "Map Workspace",
-    title: "外部地图"
-  },
   guides: {
     eyebrow: "Guide Workspace",
     title: "便利知识"
@@ -1320,6 +1320,36 @@ function getExternalTarget(target) {
   return {
     coords: schoolAreaCoords[state.school] || schoolAreaCoords.all,
     naverQuery: schoolMapQueries[state.school] || schoolMapQueries.all
+  };
+}
+
+function getListingSearchQuery(listing) {
+  if (listing?.address) {
+    const roomLabel = listing.room && listing.room !== "all" ? realRoomLabels[listing.room] || "" : "";
+    return [listing.address, roomLabel, "월세"].map((value) => String(value || "").trim()).filter(Boolean).join(" ");
+  }
+  if (listing?.naverQuery) return listing.naverQuery;
+  const parts = [localizedListing(listing || {}, "station"), localizedListing(listing || {}, "schoolName"), "월세"];
+  return parts.map((value) => String(value || "").trim()).filter(Boolean).join(" ");
+}
+
+function getAreaSearchContext() {
+  if (suwonSurveyMode.enabled) {
+    return {
+      label: text("suwonMapLabel"),
+      query: suwonSurveyMode.query,
+      target: getSuwonSurveyTarget()
+    };
+  }
+  const schoolLabel = state.school === "all" ? text("allArea") : text("schools")[state.school];
+  const query = schoolMapQueries[state.school] || schoolMapQueries.all;
+  return {
+    label: schoolLabel,
+    query,
+    target: {
+      coords: schoolAreaCoords[state.school] || schoolAreaCoords.all,
+      naverQuery: query
+    }
   };
 }
 
@@ -1378,7 +1408,6 @@ function applyStaticLanguage() {
   setText('.seeker-nav[data-view="bookings"] span', text("navBookings"));
   setText(".agent-nav span", text("navAgentBookings"));
   setText(".admin-nav span", text("navAdminReview"));
-  setText('[data-view="maps"] span', text("navMaps"));
   setText('[data-view="guides"] span', text("navGuides"));
   document.querySelector("#openBooking").lastChild.textContent = ` ${text("openBooking")}`;
   renderWorkspaceChrome();
@@ -1413,8 +1442,10 @@ function applyStaticLanguage() {
   setFieldLabel(elements.realPlaceInput, text("realPlaceLabel"));
   setFieldLabel(elements.realRentInput, text("realMaxRentLabel"));
   setFieldLabel(elements.realRoomInput, text("realRoomLabel"));
-  const realAreaFirstOption = elements.realAreaSelect?.querySelector('option[value=""]');
-  if (realAreaFirstOption) realAreaFirstOption.textContent = text("realAreaAllCustom");
+  setSelectOptions(elements.realAreaSelect, [
+    { value: "", label: text("realAreaAllCustom") },
+    ...text("realAreaOptions")
+  ]);
   elements.realAreaInput.placeholder = text("realAreaInputPlaceholder");
   elements.realPlaceInput.placeholder = text("realPlacePlaceholder");
   setButtonLabel('#realSearchForm button[type="submit"]', text("searchRealListingsButton"));
@@ -1446,7 +1477,6 @@ function applyStaticLanguage() {
     { value: "available", label: text("availableSort") }
   ]);
   setText(".listing-area .section-head h3", text("nearbyListings"));
-  document.querySelector("[data-jump-view='maps']").lastChild.textContent = ` ${text("mapEntry")}`;
 
   setText('[data-view-panel="submit"] .workspace-heading h3', text("submitListingWorkspaceTitle"));
   setText('[data-view-panel="submit"] .workspace-heading p:last-child', text("submitListingWorkspaceCopy"));
@@ -1522,12 +1552,6 @@ function applyStaticLanguage() {
   ]);
   document.querySelector('#bookingForm button[type="submit"]').lastChild.textContent = ` ${text("submitBooking")}`;
 
-  setText('[data-view-panel="maps"] .workspace-heading h3', text("mapsTitle"));
-  setText('[data-view-panel="maps"] .workspace-heading p:last-child', text("mapsCopy"));
-  setText(".map-panel .section-head h3", text("mapPanelTitle"));
-  setText("#siteViewerTitle", text("siteViewerTitle"));
-  setText(".site-viewer-note", text("siteViewerNote"));
-
   setText('[data-view-panel="guides"] .workspace-heading h3', text("guidesTitle"));
   setText('[data-view-panel="guides"] .workspace-heading p:last-child', text("guidesCopy"));
   setText(".knowledge-panel .section-head h3", text("knowledgeBase"));
@@ -1585,28 +1609,11 @@ function getSuwonSurveyTarget() {
 }
 
 function renderSuwonMapLinks() {
-  if (!suwonSurveyMode.enabled || !elements.mapProviderLinks) return;
-  const target = getSuwonSurveyTarget();
-  const mapLabel = text("suwonMapLabel");
-  elements.mapSchool.textContent = mapLabel;
-  elements.mapProviderLinks.innerHTML = [
-    ...realEstateProviders.map(
-      (provider) => `
-        <a class="map-link ${provider.id}" href="${provider.url(target)}" target="_blank" rel="noopener noreferrer">
-          <i data-lucide="${provider.icon}"></i>
-          ${text("providers")[provider.id] || provider.name} · ${mapLabel}
-        </a>
-      `
-    ),
-    ...mapProviders.map(
-      (provider) => `
-        <a class="map-link ${provider.id}" href="${getMapUrl(provider.id, suwonSurveyMode.query)}" target="_blank" rel="noopener noreferrer">
-          <i data-lucide="${provider.icon}"></i>
-          ${text("providers")[provider.id] || provider.name} · ${mapLabel}
-        </a>
-      `
-    )
-  ].join("");
+  renderExternalSearchLinks([], {
+    label: text("suwonMapLabel"),
+    query: suwonSurveyMode.query,
+    target: getSuwonSurveyTarget()
+  });
 }
 
 function renderSurveyCard(label, value, detail) {
@@ -2433,6 +2440,7 @@ function communityListingFromRow(row) {
   const title = row.title || text("defaultListing");
   const schoolName = row.school_name || text("schools")[school] || school;
   const station = row.station || row.address || schoolName;
+  const address = row.address || station;
   return {
     id: `community-${row.id}`,
     communityId: row.id,
@@ -2445,7 +2453,8 @@ function communityListingFromRow(row) {
     management: normalizeCommunityNumber(row.management),
     distance: normalizeCommunityNumber(row.distance, 15),
     station: escapeHtml(station),
-    naverQuery: `${schoolName} ${station} ${row.room_type || ""} 월세`,
+    address: escapeHtml(address),
+    naverQuery: `${schoolName} ${address} ${station} ${row.room_type || ""} 월세`,
     coords: schoolAreaCoords[school] || schoolAreaCoords.SKKU,
     availableDays: 14,
     verified: true,
@@ -2460,6 +2469,7 @@ function communityListingFromRow(row) {
       title: escapeHtml(title),
       schoolName: escapeHtml(schoolName),
       station: escapeHtml(station),
+      address: escapeHtml(address),
       tags: [text("communitySourceTag"), text("communityApprovedTag")],
       risks: [],
       description: escapeHtml(row.description || "")
@@ -2901,7 +2911,8 @@ function renderListings() {
 
   if (filtered.length === 0) {
     elements.listingList.innerHTML = `<div class="empty-state">${text("emptyListings")}</div>`;
-    renderMap(filtered);
+    renderExternalSearchLinks(filtered);
+    refreshIcons();
     return;
   }
 
@@ -2909,6 +2920,7 @@ function renderListings() {
     .map((listing) => {
       const visibleTags = localizedListingList(listing, "tags");
       const visibleRisks = localizedListingList(listing, "risks");
+      const searchQuery = getListingSearchQuery(listing);
       const tags = [...visibleTags, ...visibleRisks].map((tag) => {
         const className = visibleRisks.includes(tag) ? "tag warn" : listing.verified && tag === visibleTags[0] ? "tag good" : "tag";
         return `<span class="${className}">${tag}</span>`;
@@ -2932,7 +2944,7 @@ function renderListings() {
             </div>
             <div class="source-row">
               <span><i data-lucide="database-zap"></i>${listing.communityId ? text("communitySourceTag") : text("liveSource")}</span>
-              <span>${text("sourceKeyword", { query: listing.naverQuery })}</span>
+              <span>${text("sourceKeyword", { query: searchQuery })}</span>
             </div>
             <div class="tag-row">${tags.join("")}</div>
             <div class="listing-actions">
@@ -2946,9 +2958,17 @@ function renderListings() {
                 <i data-lucide="home"></i>
                 ${text("zigbang")}
               </a>
-              <a class="secondary-button link-button" href="${getNaverMapUrl(listing.naverQuery)}" target="_blank" rel="noopener noreferrer">
+              <a class="secondary-button link-button" href="${getNaverMapUrl(searchQuery)}" target="_blank" rel="noopener noreferrer">
                 <i data-lucide="map"></i>
                 ${text("naverMap")}
+              </a>
+              <a class="secondary-button link-button" href="${getMapUrl("kakao", searchQuery)}" target="_blank" rel="noopener noreferrer">
+                <i data-lucide="map-pinned"></i>
+                ${text("providers").kakao}
+              </a>
+              <a class="secondary-button link-button" href="${getMapUrl("google", searchQuery)}" target="_blank" rel="noopener noreferrer">
+                <i data-lucide="globe-2"></i>
+                ${text("providers").google}
               </a>
             </div>
           </div>
@@ -2957,77 +2977,36 @@ function renderListings() {
     })
     .join("");
 
-  renderMap(filtered);
+  renderExternalSearchLinks(filtered);
   refreshIcons();
 }
 
-function renderMap(filtered) {
-  const schoolLabel = state.school === "all" ? text("allArea") : text("schools")[state.school];
-  const areaQuery = schoolMapQueries[state.school];
-  const areaTarget = {
-    coords: schoolAreaCoords[state.school] || schoolAreaCoords.all,
-    naverQuery: areaQuery
-  };
-  elements.mapSchool.textContent = schoolLabel;
-  elements.mapProviderLinks.innerHTML = [
+function renderExternalSearchLinks(filtered = [], override = null) {
+  if (!elements.listingExternalLinks) return;
+  const context = override || getAreaSearchContext();
+  const firstCommunityListing = filtered.find((listing) => listing.communityId);
+  const query = firstCommunityListing ? getListingSearchQuery(firstCommunityListing) : context.query;
+  const target = firstCommunityListing || context.target;
+  const label = firstCommunityListing ? localizedListing(firstCommunityListing, "title") : context.label;
+  elements.listingExternalLinks.innerHTML = [
+    `<span>${text("listingExternalLinksLabel")}: ${escapeHtml(label)}</span>`,
     ...realEstateProviders.map(
       (provider) => `
-        <a class="map-link ${provider.id}" href="${provider.url(areaTarget)}" target="_blank" rel="noopener noreferrer">
+        <a class="source-link ${provider.id}" href="${provider.url(target)}" target="_blank" rel="noopener noreferrer">
           <i data-lucide="${provider.icon}"></i>
-          ${text("openAreaInMap", { provider: text("providers")[provider.id], area: schoolLabel })}
+          ${text("providers")[provider.id] || provider.name}
         </a>
       `
     ),
     ...mapProviders.map(
       (provider) => `
-        <a class="map-link ${provider.id}" href="${getMapUrl(provider.id, areaQuery)}" target="_blank" rel="noopener noreferrer">
+        <a class="source-link ${provider.id}" href="${getMapUrl(provider.id, query)}" target="_blank" rel="noopener noreferrer">
           <i data-lucide="${provider.icon}"></i>
-          ${text("openAreaInMap", { provider: text("providers")[provider.id], area: schoolLabel })}
+          ${text("providers")[provider.id] || provider.name}
         </a>
       `
     )
   ].join("");
-
-  if (filtered.length === 0) {
-    elements.miniMap.innerHTML = `<div class="empty-map">${text("noMapResults")}</div>`;
-    return;
-  }
-
-  elements.miniMap.innerHTML = filtered
-    .map(
-      (listing) => `
-        <article class="map-result">
-          <div class="map-result-pin">${state.lang === "ko" ? "방" : "房"}</div>
-          <div class="map-result-main">
-            <strong>${localizedListing(listing, "title")}</strong>
-            <span>${text("mapResultMeta", {
-              school: localizedListing(listing, "schoolName"),
-              station: localizedListing(listing, "station"),
-              distance: listing.distance
-            })}</span>
-          </div>
-          <div class="map-result-actions">
-            <a href="${getNaverLandUrl(listing)}" target="_blank" rel="noopener noreferrer">
-              <i data-lucide="building-2"></i>
-              ${text("naverLand")}
-            </a>
-            <a href="${getZigbangUrl(listing)}" target="_blank" rel="noopener noreferrer">
-              <i data-lucide="home"></i>
-              ${text("zigbang")}
-            </a>
-            <a href="${getNaverMapUrl(listing.naverQuery)}" target="_blank" rel="noopener noreferrer">
-              <i data-lucide="navigation"></i>
-              Naver
-            </a>
-            <a href="${getMapUrl("kakao", listing.naverQuery)}" target="_blank" rel="noopener noreferrer">
-              <i data-lucide="map-pinned"></i>
-              Kakao
-            </a>
-          </div>
-        </article>
-      `
-    )
-    .join("");
 }
 
 function renderGuides() {
@@ -3046,6 +3025,7 @@ function renderGuides() {
 function openDrawer(listingId) {
   const listing = findListingById(listingId);
   if (!listing) return;
+  const searchQuery = getListingSearchQuery(listing);
 
   elements.drawerContent.innerHTML = `
     <div class="drawer-hero" style="background-image: url('${listing.image}')"></div>
@@ -3080,7 +3060,7 @@ function openDrawer(listingId) {
       <i data-lucide="home"></i>
       ${text("openLiveSource")} · ${text("zigbang")}
     </a>
-    <a class="secondary-button link-button full" href="${getNaverMapUrl(listing.naverQuery)}" target="_blank" rel="noopener noreferrer">
+    <a class="secondary-button link-button full" href="${getNaverMapUrl(searchQuery)}" target="_blank" rel="noopener noreferrer">
       <i data-lucide="map"></i>
       ${text("drawerMap")}
     </a>
@@ -3100,93 +3080,6 @@ function closeDrawer() {
   elements.drawerBackdrop.hidden = true;
   elements.detailDrawer.classList.remove("open");
   elements.detailDrawer.setAttribute("aria-hidden", "true");
-}
-
-function blocksIframe(url) {
-  try {
-    const host = new URL(url).hostname;
-    return ["new.land.naver.com", "land.naver.com", "map.naver.com", "m.zigbang.com", "www.zigbang.com", "map.kakao.com", "www.google.com", "seoul.craigslist.org", "craigslist.org"].some(
-      (domain) => host === domain || host.endsWith(`.${domain}`)
-    );
-  } catch {
-    return false;
-  }
-}
-
-function getBlockedSourceName(url) {
-  try {
-    const host = new URL(url).hostname;
-    if (host.includes("naver")) return "Naver";
-    if (host.includes("zigbang")) return "직방";
-    if (host.includes("kakao")) return "Kakao";
-    if (host.includes("google")) return "Google";
-    if (host.includes("craigslist")) return "Craigslist";
-  } catch {
-    return "对方网站";
-  }
-  return "对方网站";
-}
-
-function renderBlockedViewer(url, title) {
-  const source = getBlockedSourceName(url);
-  elements.siteViewerFrame.hidden = true;
-  elements.siteViewerFrame.src = "about:blank";
-  elements.siteViewerFallback.hidden = false;
-  elements.siteViewerFallback.innerHTML = `
-    <div class="blocked-source-panel">
-      <i data-lucide="shield-alert"></i>
-      <h4>${text("iframeBlockedTitle", { source })}</h4>
-      <p>${text("iframeBlockedBody")}</p>
-      <div class="blocked-source-url">${escapeHtml(url)}</div>
-      <div class="blocked-source-actions">
-        <button class="secondary-button" type="button" data-copy-source-url="${escapeHtml(url)}">
-          <i data-lucide="copy"></i>
-          ${text("copyOriginalLink")}
-        </button>
-        <button class="primary-button" type="button" data-close-source-viewer>
-          <i data-lucide="panel-bottom-close"></i>
-          ${text("backToSiteResults")}
-        </button>
-      </div>
-      <p class="blocked-source-hint">${text("localApiHint")}</p>
-    </div>
-  `;
-}
-
-function openSiteViewer(url, title = text("siteViewerTitle")) {
-  if (!url || !elements.siteViewerFrame) return;
-  elements.siteViewerTitle.textContent = title.trim() || text("siteViewerTitle");
-  elements.siteViewerUrl.textContent = url;
-  if (blocksIframe(url)) {
-    renderBlockedViewer(url, title);
-  } else {
-    elements.siteViewerFallback.hidden = true;
-    elements.siteViewerFallback.innerHTML = "";
-    elements.siteViewerFrame.hidden = false;
-    elements.siteViewerFrame.src = url;
-  }
-  elements.siteViewerBackdrop.hidden = false;
-  elements.siteViewer.hidden = false;
-  elements.siteViewer.classList.add("open");
-  elements.siteViewer.setAttribute("aria-hidden", "false");
-  refreshIcons();
-}
-
-function closeSiteViewer() {
-  elements.siteViewerBackdrop.hidden = true;
-  elements.siteViewer.classList.remove("open");
-  elements.siteViewer.setAttribute("aria-hidden", "true");
-  elements.siteViewer.hidden = true;
-  elements.siteViewerFallback.hidden = true;
-  elements.siteViewerFallback.innerHTML = "";
-  elements.siteViewerFrame.hidden = false;
-  elements.siteViewerFrame.src = "about:blank";
-}
-
-function reloadSiteViewer() {
-  const url = elements.siteViewerFrame.src;
-  if (!url || url === "about:blank") return;
-  elements.siteViewerFrame.src = url;
 }
 
 function escapeHtml(value) {
@@ -3417,7 +3310,7 @@ function renderRealListingCard(item) {
           ${tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
         </div>
         ${renderListingInsights(item)}
-        ${url ? `<button class="secondary-button" type="button" data-open-real-url="${url}"><i data-lucide="panel-top-open"></i>${text("viewSourceConditions")}</button>` : ""}
+        ${url ? `<a class="secondary-button link-button" href="${url}" target="_blank" rel="noopener noreferrer"><i data-lucide="external-link"></i>${text("viewSourceConditions")}</a>` : ""}
       </div>
     </article>
   `;
@@ -3455,7 +3348,7 @@ function renderRealSearchFallback(params, reason = "") {
       "deposit": 1000,
       "roomType": "원룸",
       "address": "서울 서대문구",
-      "sourceName": "Naver 부동산",
+      "sourceName": "Naver Real Estate",
       "url": "https://...",
       "image": "https://...",
       "updatedAt": "2026-06-10"
@@ -3611,10 +3504,6 @@ function bindEvents() {
   });
 
   document.addEventListener("click", (event) => {
-    const externalLink = event.target.closest('a[target="_blank"][href]');
-    const realUrlButton = event.target.closest("[data-open-real-url]");
-    const copySourceUrlButton = event.target.closest("[data-copy-source-url]");
-    const closeSourceViewerButton = event.target.closest("[data-close-source-viewer]");
     const detailButton = event.target.closest("[data-detail]");
     const bookButton = event.target.closest("[data-book]");
     const jumpViewButton = event.target.closest("[data-jump-view]");
@@ -3625,25 +3514,6 @@ function bindEvents() {
     const approveListingButton = event.target.closest("[data-approve-listing]");
     const rejectListingButton = event.target.closest("[data-reject-listing]");
 
-    if (externalLink) {
-      event.preventDefault();
-      openSiteViewer(externalLink.href, externalLink.textContent.replace(/\s+/g, " ").trim());
-      return;
-    }
-    if (realUrlButton) {
-      openSiteViewer(realUrlButton.dataset.openRealUrl, realUrlButton.textContent.replace(/\s+/g, " ").trim());
-      return;
-    }
-    if (copySourceUrlButton) {
-      navigator.clipboard?.writeText(copySourceUrlButton.dataset.copySourceUrl);
-      copySourceUrlButton.innerHTML = `<i data-lucide="check"></i>${text("copied")}`;
-      refreshIcons();
-      return;
-    }
-    if (closeSourceViewerButton) {
-      closeSiteViewer();
-      return;
-    }
     if (detailButton) openDrawer(detailButton.dataset.detail);
     if (bookButton) {
       prefillBooking(bookButton.dataset.book);
@@ -3708,9 +3578,6 @@ function bindEvents() {
 
   document.querySelector("#closeDrawer").addEventListener("click", closeDrawer);
   elements.drawerBackdrop.addEventListener("click", closeDrawer);
-  document.querySelector("#closeSiteViewer").addEventListener("click", closeSiteViewer);
-  elements.siteViewerBackdrop.addEventListener("click", closeSiteViewer);
-  elements.reloadSiteViewer.addEventListener("click", reloadSiteViewer);
 
   elements.realSearchForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -3724,7 +3591,6 @@ function bindEvents() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       closeDrawer();
-      closeSiteViewer();
     }
   });
 

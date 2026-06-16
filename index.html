@@ -156,10 +156,6 @@
               <i data-lucide="shield-check"></i>
               <span>审核后台</span>
             </button>
-            <button class="nav-item" data-view="maps" type="button">
-              <i data-lucide="map"></i>
-              <span>外部地图</span>
-            </button>
             <button class="nav-item" data-view="guides" type="button">
               <i data-lucide="book-open-check"></i>
               <span>便利知识</span>
@@ -220,7 +216,7 @@
               <p class="eyebrow">Listings Workspace</p>
               <h3>真实房源入口</h3>
             </div>
-            <p>按学校、预算和房型生成 Naver 부동산 / 직방 实时检索入口；本页不复制平台房源数据。</p>
+            <p>按学校、预算和房型生成 Naver 房产 / Zigbang 实时检索入口；本页不复制平台房源数据。</p>
           </div>
 
           <section class="focus-survey-panel" id="focusSurveyPanel" aria-label="水原成均馆房源调查">
@@ -232,7 +228,7 @@
               <span class="status-pill">专题模式</span>
             </div>
             <p class="survey-lead">
-              调查范围固定为成均馆大学自然科学校区、성균관대역、栗田洞一带。结果会优先展示本地房源样本、实际租赁行情、安全参考和地图入口。
+              调查范围固定为成均馆大学自然科学校区、성균관대역、栗田洞一带。结果会优先展示本地房源样本、实际租赁行情、安全参考和外部搜索入口。
             </p>
             <div class="survey-chip-row">
               <span>核心区域：水原市长安区栗田洞</span>
@@ -388,10 +384,7 @@
                 <p class="eyebrow">Nearby Listings</p>
                 <h3>学校周边真实平台入口</h3>
               </div>
-              <button class="secondary-button" data-jump-view="maps" type="button">
-                <i data-lucide="map"></i>
-                看地图入口
-              </button>
+              <div class="listing-source-links" id="listingExternalLinks"></div>
             </div>
             <div class="listing-list" id="listingList"></div>
           </section>
@@ -593,30 +586,6 @@
           </div>
         </section>
 
-        <section class="view-section" data-view-panel="maps">
-          <div class="workspace-heading">
-            <div>
-              <p class="eyebrow">Map Workspace</p>
-              <h3>外部地图</h3>
-            </div>
-            <p>把当前筛选后的区域直接带到 Naver 부동산、직방、Naver / Kakao / Google 地图。</p>
-          </div>
-
-          <section class="map-panel map-panel-full">
-            <div class="section-head tight">
-              <div>
-                <p class="eyebrow">External Maps</p>
-                <h3>真实房源与地图入口</h3>
-              </div>
-              <span id="mapSchool">全部</span>
-            </div>
-            <div class="external-map" id="miniMap" aria-label="外部地图房源入口"></div>
-            <div class="map-links" id="mapProviderLinks">
-              <a class="map-link" id="mapAreaLink" href="https://map.naver.com/p/" target="_blank" rel="noopener noreferrer"></a>
-            </div>
-          </section>
-        </section>
-
         <section class="view-section" data-view-panel="guides">
           <div class="workspace-heading">
             <div>
@@ -672,30 +641,6 @@
       </button>
       <div id="drawerContent"></div>
     </aside>
-
-    <div class="site-viewer-backdrop" id="siteViewerBackdrop" hidden></div>
-    <section class="site-viewer" id="siteViewer" aria-label="站内浏览" aria-hidden="true" hidden>
-      <header class="site-viewer-header">
-        <div>
-          <p class="eyebrow">In-app Browser</p>
-          <h3 id="siteViewerTitle">站内浏览</h3>
-          <p id="siteViewerUrl"></p>
-        </div>
-        <div class="site-viewer-actions">
-          <button class="icon-button" id="reloadSiteViewer" aria-label="重新加载">
-            <i data-lucide="refresh-cw"></i>
-          </button>
-          <button class="icon-button" id="closeSiteViewer" aria-label="关闭站内浏览">
-            <i data-lucide="x"></i>
-          </button>
-        </div>
-      </header>
-      <div class="site-viewer-note">
-        如果对方网站禁止嵌入，下面可能显示为空白或拒绝连接；链接仍会留在本页面内。
-      </div>
-      <div class="site-viewer-fallback" id="siteViewerFallback" hidden></div>
-      <iframe id="siteViewerFrame" title="站内浏览内容" loading="lazy"></iframe>
-    </section>
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

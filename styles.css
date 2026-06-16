@@ -1370,6 +1370,43 @@ body.suwon-focus .listing-area {
   margin-top: 10px;
 }
 
+.listing-source-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 720px;
+}
+
+.listing-source-links > span {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.source-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.source-link:hover {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+}
+
 .map-link {
   display: inline-flex;
   align-items: center;
@@ -2033,6 +2070,16 @@ body.suwon-focus .listing-area {
   .section-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .listing-source-links {
+    justify-content: flex-start;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .listing-source-links > span {
+    text-align: left;
   }
 
   .listing-toolbar {
