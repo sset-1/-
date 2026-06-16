@@ -24,6 +24,21 @@ In Supabase:
 3. Decide whether email confirmation is required.
 4. Create users from the app registration form, or from the Supabase dashboard.
 
+## User Roles
+
+The registration form now has a role selector:
+
+- `找房人 / 집 찾는 사람` stores `user_metadata.role = "seeker"`.
+- `看房人 / 방 확인 담당` stores `user_metadata.role = "agent"`.
+
+Existing Supabase Auth users keep their old metadata. If an old phone account still opens the seeker workspace, use one of these fixes:
+
+1. Log out, register a new account, and choose `看房人`.
+2. Add the existing phone email to `public.agent_accounts`.
+3. Update that user's Auth metadata to `{ "role": "agent" }`.
+
+After changing a role, log out and log back in on that device.
+
 ## Shared Viewing Requests
 
 Login alone only identifies the user. To make booking/viewing requests visible across devices, create the shared database table:

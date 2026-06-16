@@ -670,6 +670,10 @@ Object.assign(translations.zh, {
   loginPasswordPlaceholder: "至少 6 位密码",
   loginSubmit: "登录",
   signupSubmit: "注册新账号",
+  signupRoleLabel: "注册身份",
+  signupRoleSeeker: "找房人",
+  signupRoleAgent: "看房人",
+  signupRoleHint: "只在注册新账号时保存身份；已有账号请在 Supabase 修改角色或重新注册。",
   authActionsLabel: "账号操作",
   loginWarning: "现在使用 Supabase Auth 真实登录；如果开启邮箱验证，注册后需要先去邮箱确认。",
   loginUserLabel: "登录用户",
@@ -802,6 +806,10 @@ Object.assign(translations.ko, {
   loginPasswordPlaceholder: "최소 6자리 비밀번호",
   loginSubmit: "로그인",
   signupSubmit: "새 계정 만들기",
+  signupRoleLabel: "가입 역할",
+  signupRoleSeeker: "집 찾는 사람",
+  signupRoleAgent: "방 확인 담당",
+  signupRoleHint: "새 계정 가입 때 역할이 저장됩니다. 기존 계정은 Supabase에서 역할을 수정하거나 다시 가입하세요.",
   authActionsLabel: "계정 작업",
   loginWarning: "Supabase Auth로 실제 로그인합니다. 이메일 인증을 켠 경우 가입 후 먼저 메일을 확인하세요.",
   loginUserLabel: "로그인 사용자",
@@ -993,6 +1001,8 @@ const elements = {
   loginForm: document.querySelector("#loginForm"),
   loginEmail: document.querySelector("#loginEmail"),
   loginPassword: document.querySelector("#loginPassword"),
+  signupRole: document.querySelector("#signupRole"),
+  signupRoleHint: document.querySelector("#signupRoleHint"),
   loginResult: document.querySelector("#loginResult"),
   signupButton: document.querySelector("#signupButton"),
   roleGate: document.querySelector("#roleGate"),
@@ -1162,8 +1172,14 @@ function applyStaticLanguage() {
   setText("#loginForm .status-pill", text("loginStatus"));
   setFieldLabel(elements.loginEmail, text("emailLabel"));
   setFieldLabel(elements.loginPassword, text("passwordLabel"));
+  setFieldLabel(elements.signupRole, text("signupRoleLabel"));
   elements.loginEmail.placeholder = text("loginEmailPlaceholder");
   elements.loginPassword.placeholder = text("loginPasswordPlaceholder");
+  setSelectOptions(elements.signupRole, [
+    { value: "seeker", label: text("signupRoleSeeker") },
+    { value: "agent", label: text("signupRoleAgent") }
+  ]);
+  if (elements.signupRoleHint) elements.signupRoleHint.textContent = text("signupRoleHint");
   setButtonLabel('#loginForm button[type="submit"]', text("loginSubmit"));
   setButtonLabel(elements.signupButton, text("signupSubmit"));
   document.querySelector(".demo-login-grid")?.setAttribute("aria-label", text("authActionsLabel"));
@@ -1633,10 +1649,14 @@ async function authenticateSupabaseUser(email, password) {
   }
 
   elements.loginResult.textContent = "";
-  if (data.user) await applyAuthenticatedUser(data.user);
+  if (data.user) {
+    await applyAuthenticatedUser(data.user);
+    await loadRemoteBookings();
+    startBookingRealtime();
+  }
 }
 
-async function registerSupabaseUser(email, password) {
+async function registerSupabaseUser(email, password, role = "seeker") {
   elements.loginResult.textContent = text("signupLoading");
   if (!supabaseClient) {
     elements.loginResult.textContent = text("supabaseMissing");
@@ -1647,12 +1667,13 @@ async function registerSupabaseUser(email, password) {
     return;
   }
 
+  const signupRole = role === "agent" ? "agent" : "seeker";
   const { data, error } = await supabaseClient.auth.signUp({
     email: email.trim(),
     password,
     options: {
       data: {
-        role: "seeker",
+        role: signupRole,
         full_name: email.trim().split("@")[0]
       }
     }
@@ -1666,6 +1687,8 @@ async function registerSupabaseUser(email, password) {
   if (data.session && data.user) {
     elements.loginResult.textContent = "";
     await applyAuthenticatedUser(data.user);
+    await loadRemoteBookings();
+    startBookingRealtime();
   } else {
     elements.loginResult.textContent = text("signupConfirmation");
   }
@@ -2809,7 +2832,7 @@ function bindEvents() {
     });
 
     elements.signupButton?.addEventListener("click", () => {
-      registerSupabaseUser(elements.loginEmail.value, elements.loginPassword.value);
+      registerSupabaseUser(elements.loginEmail.value, elements.loginPassword.value, elements.signupRole?.value);
     });
 
     elements.logoutButton.addEventListener("click", logout);
