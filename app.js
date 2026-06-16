@@ -303,11 +303,15 @@ const state = {
   role: "seeker",
   profile: {
     seeker: { name: "", contact: "" },
-    agent: { name: "", contact: "" }
+    agent: { name: "", contact: "" },
+    admin: { name: "", contact: "" }
   },
   currentUser: null,
   bookings: []
 };
+
+let communityListings = [];
+let communitySubmissions = [];
 
 const storageKeys = {
   lang: "hanstay-lang",
@@ -331,13 +335,18 @@ const translations = {
     processItems: ["找房人提交视频看房需求", "看房人端接单并安排连线", "顾问按检查表回填备注", "找房人跟踪状态和视频链接"],
     roleSeeker: "找房人端",
     roleAgent: "看房人端",
+    roleAdmin: "超级审核端",
     workspaceSeeker: "找房人工作台",
     workspaceAgent: "看房人工作台",
+    workspaceAdmin: "审核后台",
     studentWorkspace: "Student Workspace",
     agentWorkspace: "Agent Workspace",
+    adminWorkspace: "Admin Workspace",
     navListings: "真实房源",
+    navSubmitListing: "上传房源",
     navBookings: "预约中心",
     navAgentBookings: "看房任务",
+    navAdminReview: "审核后台",
     navMaps: "外部地图",
     navGuides: "便利知识",
     openBooking: "预约视频看房",
@@ -371,6 +380,51 @@ const translations = {
     bookingWorkspaceTitle: "预约中心",
     bookingWorkspaceCopySeeker: "找房人提交视频看房需求，并在这里跟踪顾问处理进度。",
     bookingWorkspaceCopyAgent: "看房人处理学生提交的预约，接单、安排视频链接并回填检查结果。",
+    bookingWorkspaceCopyAdmin: "超级账号主要负责审核用户上传的房源，必要时也可以查看平台内容。",
+    submitListingWorkspaceTitle: "上传房源",
+    submitListingWorkspaceCopy: "用户可以提交真实房源信息。提交后不会立刻公开，需要超级账号审核通过。",
+    submitListingPanelTitle: "房源投稿表",
+    adminReviewWorkspaceTitle: "房源审核后台",
+    adminReviewWorkspaceCopy: "超级账号在这里审核用户投稿。通过后房源会进入前端列表，拒绝后不会公开展示。",
+    adminReviewPanelTitle: "待审核房源",
+    submitListingTitleLabel: "房源标题",
+    submitListingSchoolLabel: "学校 / 区域",
+    submitListingRoomLabel: "房型",
+    submitListingRentLabel: "月租",
+    submitListingDepositLabel: "保证金",
+    submitListingManagementLabel: "管理费",
+    submitListingStationLabel: "地点 / 地铁站",
+    submitListingDistanceLabel: "到学校分钟",
+    submitListingAddressLabel: "详细地址",
+    submitListingImageLabel: "图片 URL",
+    submitListingContactLabel: "联系方式",
+    submitListingDescriptionLabel: "房源说明",
+    submitListingTitlePlaceholder: "例如：栗田洞近成均馆一居室",
+    submitListingStationPlaceholder: "例如：성균관대역 / 율전동",
+    submitListingAddressPlaceholder: "例如：수원시 장안구 율전동",
+    submitListingImagePlaceholder: "https://...",
+    submitListingDescriptionPlaceholder: "写清楚位置、租金包含内容、入住时间、注意事项。",
+    submitListingButton: "提交审核",
+    communitySyncing: "正在提交到审核队列...",
+    communitySubmitted: "已提交审核。超级账号通过后，这套房会显示在房源列表里。",
+    communitySubmitFailed: "提交失败：{error}",
+    communityLoadFailed: "房源投稿读取失败：{error}",
+    communityReviewFailed: "审核操作失败：{error}",
+    communityApproved: "已通过，房源会公开展示。",
+    communityRejected: "已拒绝，房源不会公开展示。",
+    communityEmptyAdmin: "暂无待审核房源。",
+    communitySubmitter: "提交人",
+    communityContact: "联系方式",
+    communityStatusPending: "待审核",
+    communityStatusApproved: "已通过",
+    communityStatusRejected: "已拒绝",
+    approveListing: "通过",
+    rejectListing: "拒绝",
+    communitySourceTag: "用户投稿",
+    communityApprovedTag: "后台审核通过",
+    adminName: "管理员姓名",
+    adminContact: "管理员联系方式",
+    saveProfileAdmin: "保存管理员信息",
     videoTourRequest: "视频看房需求",
     listingIntent: "意向房源",
     name: "姓名",
@@ -470,7 +524,8 @@ const translations = {
       Yonsei: "延世大学",
       Korea: "高丽大学",
       SNU: "首尔大学",
-      Hanyang: "汉阳大学"
+      Hanyang: "汉阳大学",
+      SKKU: "水原成均馆"
     },
     providers: {
       naverLand: "Naver 부동산",
@@ -493,13 +548,18 @@ const translations = {
     processItems: ["학생이 영상 투어 요청 제출", "현장 담당자가 접수 후 일정 조율", "체크리스트에 따라 점검 메모 작성", "학생이 상태와 영상 링크 확인"],
     roleSeeker: "방 찾는 사람",
     roleAgent: "현장 확인 담당자",
+    roleAdmin: "관리자",
     workspaceSeeker: "방 찾기 워크스페이스",
     workspaceAgent: "현장 확인 워크스페이스",
+    workspaceAdmin: "심사 관리자",
     studentWorkspace: "Student Workspace",
     agentWorkspace: "Agent Workspace",
+    adminWorkspace: "Admin Workspace",
     navListings: "실매물 링크",
+    navSubmitListing: "매물 등록",
     navBookings: "예약 센터",
     navAgentBookings: "투어 업무",
+    navAdminReview: "심사 관리자",
     navMaps: "외부 지도",
     navGuides: "생활 가이드",
     openBooking: "영상 투어 예약",
@@ -533,6 +593,51 @@ const translations = {
     bookingWorkspaceTitle: "예약 센터",
     bookingWorkspaceCopySeeker: "영상 투어 요청을 제출하고 담당자의 처리 상황을 여기에서 확인하세요.",
     bookingWorkspaceCopyAgent: "학생이 제출한 요청을 접수하고 영상 링크와 점검 결과를 기록하세요.",
+    bookingWorkspaceCopyAdmin: "관리자 계정은 사용자가 올린 매물을 심사하고 필요한 경우 플랫폼 내용을 확인합니다.",
+    submitListingWorkspaceTitle: "매물 등록",
+    submitListingWorkspaceCopy: "사용자가 직접 매물 정보를 제출할 수 있습니다. 제출 즉시 공개되지 않고 관리자 승인 후 표시됩니다.",
+    submitListingPanelTitle: "매물 등록 폼",
+    adminReviewWorkspaceTitle: "매물 심사 관리자",
+    adminReviewWorkspaceCopy: "관리자 계정은 사용자 제출 매물을 승인하거나 거절합니다. 승인된 매물만 프론트 목록에 공개됩니다.",
+    adminReviewPanelTitle: "심사 대기 매물",
+    submitListingTitleLabel: "매물 제목",
+    submitListingSchoolLabel: "학교 / 지역",
+    submitListingRoomLabel: "방 유형",
+    submitListingRentLabel: "월세",
+    submitListingDepositLabel: "보증금",
+    submitListingManagementLabel: "관리비",
+    submitListingStationLabel: "위치 / 지하철역",
+    submitListingDistanceLabel: "학교까지 분",
+    submitListingAddressLabel: "상세 주소",
+    submitListingImageLabel: "이미지 URL",
+    submitListingContactLabel: "연락처",
+    submitListingDescriptionLabel: "매물 설명",
+    submitListingTitlePlaceholder: "예: 율전동 성균관대 근처 원룸",
+    submitListingStationPlaceholder: "예: 성균관대역 / 율전동",
+    submitListingAddressPlaceholder: "예: 수원시 장안구 율전동",
+    submitListingImagePlaceholder: "https://...",
+    submitListingDescriptionPlaceholder: "위치, 월세 포함 항목, 입주 가능일, 주의사항을 적어 주세요.",
+    submitListingButton: "심사 제출",
+    communitySyncing: "심사 대기열에 제출하는 중...",
+    communitySubmitted: "심사 요청이 제출되었습니다. 관리자 승인 후 매물 목록에 표시됩니다.",
+    communitySubmitFailed: "제출 실패: {error}",
+    communityLoadFailed: "사용자 제출 매물을 불러오지 못했습니다: {error}",
+    communityReviewFailed: "심사 처리 실패: {error}",
+    communityApproved: "승인되었습니다. 매물이 공개됩니다.",
+    communityRejected: "거절되었습니다. 매물은 공개되지 않습니다.",
+    communityEmptyAdmin: "심사 대기 매물이 없습니다.",
+    communitySubmitter: "제출자",
+    communityContact: "연락처",
+    communityStatusPending: "심사 대기",
+    communityStatusApproved: "승인됨",
+    communityStatusRejected: "거절됨",
+    approveListing: "승인",
+    rejectListing: "거절",
+    communitySourceTag: "사용자 제출",
+    communityApprovedTag: "관리자 승인",
+    adminName: "관리자 이름",
+    adminContact: "관리자 연락처",
+    saveProfileAdmin: "관리자 정보 저장",
     videoTourRequest: "영상 투어 요청",
     listingIntent: "관심 매물",
     name: "이름",
@@ -632,7 +737,8 @@ const translations = {
       Yonsei: "연세대학교",
       Korea: "고려대학교",
       SNU: "서울대학교",
-      Hanyang: "한양대학교"
+      Hanyang: "한양대학교",
+      SKKU: "수원 성균관대"
     },
     providers: {
       naverLand: "네이버 부동산",
@@ -649,7 +755,8 @@ const schoolMapQueries = {
   Yonsei: "연세대학교 신촌 원룸 월세",
   Korea: "고려대학교 안암 원룸 월세",
   SNU: "서울대학교 서울대입구 원룸 월세",
-  Hanyang: "한양대학교 왕십리 원룸 월세"
+  Hanyang: "한양대학교 왕십리 원룸 월세",
+  SKKU: "성균관대학교 자연과학캠퍼스 율전동 원룸 월세"
 };
 
 const schoolAreaCoords = {
@@ -657,7 +764,8 @@ const schoolAreaCoords = {
   Yonsei: { lat: 37.5572, lng: 126.9368 },
   Korea: { lat: 37.586, lng: 127.0304 },
   SNU: { lat: 37.4812, lng: 126.9527 },
-  Hanyang: { lat: 37.5568, lng: 127.0443 }
+  Hanyang: { lat: 37.5568, lng: 127.0443 },
+  SKKU: { lat: 37.2936, lng: 126.9756 }
 };
 
 Object.assign(translations.zh, {
@@ -981,7 +1089,9 @@ const supabaseClient =
     ? window.supabase.createClient(supabaseSettings.url, supabaseSettings.publishableKey)
     : null;
 const supabaseBookingsTable = supabaseSettings.bookingsTable || "bookings";
+const supabaseCommunityListingsTable = supabaseSettings.communityListingsTable || "community_listings";
 let bookingRealtimeChannel = null;
+let communityListingRealtimeChannel = null;
 const suwonSurveyMode = {
   enabled: true,
   areaSelect: "成均馆大学 水原 栗田",
@@ -1055,6 +1165,11 @@ const elements = {
   bookingName: document.querySelector('input[name="name"]'),
   bookingContact: document.querySelector('input[name="contact"]'),
   bookingResult: document.querySelector("#bookingResult"),
+  listingSubmitForm: document.querySelector("#listingSubmitForm"),
+  listingSubmitStatus: document.querySelector("#listingSubmitStatus"),
+  adminListingQueue: document.querySelector("#adminListingQueue"),
+  adminListingCount: document.querySelector("#adminListingCount"),
+  adminReviewStatus: document.querySelector("#adminReviewStatus"),
   profileName: document.querySelector("#profileName"),
   profileContact: document.querySelector("#profileContact"),
   profileNameLabel: document.querySelector("#profileNameLabel"),
@@ -1127,9 +1242,17 @@ const viewCopy = {
     eyebrow: "Listings Workspace",
     title: "房源大厅"
   },
+  submit: {
+    eyebrow: "Community Listings",
+    title: "上传房源"
+  },
   bookings: {
     eyebrow: "Booking Workspace",
     title: "预约中心"
+  },
+  admin: {
+    eyebrow: "Admin Review",
+    title: "房源审核"
   },
   maps: {
     eyebrow: "Map Workspace",
@@ -1167,9 +1290,15 @@ function getExternalTarget(target) {
 }
 
 function renderWorkspaceChrome() {
-  elements.workspaceEyebrow.textContent = state.role === "agent" ? text("agentWorkspace") : text("studentWorkspace");
-  elements.workspaceTitle.textContent = state.role === "agent" ? text("workspaceAgent") : text("workspaceSeeker");
-  elements.bookingWorkspaceCopy.textContent = state.role === "agent" ? text("bookingWorkspaceCopyAgent") : text("bookingWorkspaceCopySeeker");
+  const roleCopy = {
+    seeker: { eyebrow: text("studentWorkspace"), title: text("workspaceSeeker"), booking: text("bookingWorkspaceCopySeeker") },
+    agent: { eyebrow: text("agentWorkspace"), title: text("workspaceAgent"), booking: text("bookingWorkspaceCopyAgent") },
+    admin: { eyebrow: text("adminWorkspace"), title: text("workspaceAdmin"), booking: text("bookingWorkspaceCopyAdmin") }
+  };
+  const copy = roleCopy[state.role] || roleCopy.seeker;
+  elements.workspaceEyebrow.textContent = copy.eyebrow;
+  elements.workspaceTitle.textContent = copy.title;
+  elements.bookingWorkspaceCopy.textContent = copy.booking;
 }
 
 function applyStaticLanguage() {
@@ -1211,8 +1340,10 @@ function applyStaticLanguage() {
   });
 
   setText('[data-view="listings"] span', text("navListings"));
-  setText(".seeker-nav span", text("navBookings"));
+  setText('[data-view="submit"] span', text("navSubmitListing"));
+  setText('.seeker-nav[data-view="bookings"] span', text("navBookings"));
   setText(".agent-nav span", text("navAgentBookings"));
+  setText(".admin-nav span", text("navAdminReview"));
   setText('[data-view="maps"] span', text("navMaps"));
   setText('[data-view="guides"] span', text("navGuides"));
   document.querySelector("#openBooking").lastChild.textContent = ` ${text("openBooking")}`;
@@ -1271,7 +1402,8 @@ function applyStaticLanguage() {
     { value: "Yonsei", label: text("schools").Yonsei },
     { value: "Korea", label: text("schools").Korea },
     { value: "SNU", label: text("schools").SNU },
-    { value: "Hanyang", label: text("schools").Hanyang }
+    { value: "Hanyang", label: text("schools").Hanyang },
+    { value: "SKKU", label: text("schools").SKKU }
   ]);
   setSelectOptions(elements.sortSelect, [
     { value: "recommended", label: text("recommendedSort") },
@@ -1282,8 +1414,51 @@ function applyStaticLanguage() {
   setText(".listing-area .section-head h3", text("nearbyListings"));
   document.querySelector("[data-jump-view='maps']").lastChild.textContent = ` ${text("mapEntry")}`;
 
+  setText('[data-view-panel="submit"] .workspace-heading h3', text("submitListingWorkspaceTitle"));
+  setText('[data-view-panel="submit"] .workspace-heading p:last-child', text("submitListingWorkspaceCopy"));
+  setText(".listing-submit-panel .section-head h3", text("submitListingPanelTitle"));
+  if (elements.listingSubmitForm) {
+    const form = elements.listingSubmitForm;
+    setFieldLabel(form.elements.title, text("submitListingTitleLabel"));
+    setFieldLabel(form.elements.school, text("submitListingSchoolLabel"));
+    setFieldLabel(form.elements.roomType, text("submitListingRoomLabel"));
+    setFieldLabel(form.elements.rent, text("submitListingRentLabel"));
+    setFieldLabel(form.elements.deposit, text("submitListingDepositLabel"));
+    setFieldLabel(form.elements.management, text("submitListingManagementLabel"));
+    setFieldLabel(form.elements.station, text("submitListingStationLabel"));
+    setFieldLabel(form.elements.distance, text("submitListingDistanceLabel"));
+    setFieldLabel(form.elements.address, text("submitListingAddressLabel"));
+    setFieldLabel(form.elements.imageUrl, text("submitListingImageLabel"));
+    setFieldLabel(form.elements.contact, text("submitListingContactLabel"));
+    setFieldLabel(form.elements.description, text("submitListingDescriptionLabel"));
+    form.elements.title.placeholder = text("submitListingTitlePlaceholder");
+    form.elements.station.placeholder = text("submitListingStationPlaceholder");
+    form.elements.address.placeholder = text("submitListingAddressPlaceholder");
+    form.elements.imageUrl.placeholder = text("submitListingImagePlaceholder");
+    form.elements.contact.placeholder = text("contactPlaceholder");
+    form.elements.description.placeholder = text("submitListingDescriptionPlaceholder");
+    setSelectOptions(form.elements.school, [
+      { value: "SKKU", label: text("schools").SKKU },
+      { value: "Yonsei", label: text("schools").Yonsei },
+      { value: "Korea", label: text("schools").Korea },
+      { value: "SNU", label: text("schools").SNU },
+      { value: "Hanyang", label: text("schools").Hanyang }
+    ]);
+    setSelectOptions(form.elements.roomType, [
+      { value: "one-room", label: text("oneRoom") },
+      { value: "two-room", label: text("twoRoom") },
+      { value: "gosiwon", label: text("gosiwon") },
+      { value: "officetel", label: "Officetel" }
+    ]);
+    document.querySelector('#listingSubmitForm button[type="submit"]').lastChild.textContent = ` ${text("submitListingButton")}`;
+  }
+
+  setText('[data-view-panel="admin"] .workspace-heading h3', text("adminReviewWorkspaceTitle"));
+  setText('[data-view-panel="admin"] .workspace-heading p:last-child', text("adminReviewWorkspaceCopy"));
+  setText(".admin-review-panel .section-head h3", text("adminReviewPanelTitle"));
+
   setText('[data-view-panel="bookings"] .workspace-heading h3', text("bookingWorkspaceTitle"));
-  setText("#bookingWorkspaceCopy", state.role === "agent" ? text("bookingWorkspaceCopyAgent") : text("bookingWorkspaceCopySeeker"));
+  setText("#bookingWorkspaceCopy", state.role === "agent" ? text("bookingWorkspaceCopyAgent") : state.role === "admin" ? text("bookingWorkspaceCopyAdmin") : text("bookingWorkspaceCopySeeker"));
   setText(".booking-panel .section-head h3", text("videoTourRequest"));
   setFieldLabel(elements.bookingListing, text("listingIntent"));
   setFieldLabel(elements.bookingName, text("name"));
@@ -1323,6 +1498,7 @@ function setLanguage(lang) {
   state.lang = lang === "ko" ? "ko" : "zh";
   localStorage.setItem(storageKeys.lang, state.lang);
   applyStaticLanguage();
+  rebuildCommunityListings();
   renderBookingOptions();
   renderListings();
   renderGuides();
@@ -1334,7 +1510,9 @@ function setLanguage(lang) {
 }
 
 function getAllowedView(view) {
-  if (state.role === "agent" && view === "listings") return "bookings";
+  if (state.role === "agent" && (view === "listings" || view === "submit" || view === "admin")) return "bookings";
+  if (state.role === "admin" && (view === "bookings" || view === "submit")) return "admin";
+  if (state.role === "seeker" && view === "admin") return "listings";
   return viewCopy[view] ? view : "listings";
 }
 
@@ -1342,8 +1520,9 @@ function setActiveView(view) {
   state.activeView = getAllowedView(view);
   elements.viewButtons.forEach((button) => {
     const isVisibleForRole =
-      (state.role === "seeker" && !button.classList.contains("agent-nav")) ||
-      (state.role === "agent" && !button.classList.contains("seeker-nav") && button.dataset.view !== "listings");
+      (state.role === "seeker" && !button.classList.contains("agent-nav") && !button.classList.contains("admin-nav")) ||
+      (state.role === "agent" && !button.classList.contains("seeker-nav") && !button.classList.contains("admin-nav") && button.dataset.view !== "listings") ||
+      (state.role === "admin" && !button.classList.contains("seeker-nav") && !button.classList.contains("agent-nav"));
     button.classList.toggle("active", isVisibleForRole && button.dataset.view === state.activeView);
   });
   elements.viewPanels.forEach((panel) => {
@@ -1515,7 +1694,7 @@ function applySuwonSurveyMode(options = {}) {
 
   document.body.classList.add("suwon-focus");
   document.querySelector(".listing-toolbar")?.setAttribute("hidden", "");
-  document.querySelector(".listing-area")?.setAttribute("hidden", "");
+  document.querySelector(".listing-area")?.removeAttribute("hidden");
   setText("#workspaceEyebrow", "Suwon SKKU Survey");
   setText("#workspaceTitle", text("suwonWorkspaceTitle"));
   setText('[data-view-panel="listings"] .workspace-heading .eyebrow', "Sungkyunkwan Natural Sciences Campus");
@@ -1544,8 +1723,14 @@ function applySuwonSurveyMode(options = {}) {
   if (autoSearch) searchRealListings();
 }
 
+function normalizeRole(role) {
+  if (role === "admin") return "admin";
+  if (role === "agent") return "agent";
+  return "seeker";
+}
+
 function enterRole(role) {
-  state.role = role === "agent" ? "agent" : "seeker";
+  state.role = normalizeRole(role);
   localStorage.setItem(storageKeys.role, state.role);
   document.body.dataset.role = state.role;
   elements.loginGate.hidden = true;
@@ -1553,7 +1738,7 @@ function enterRole(role) {
   elements.appShell.hidden = false;
   renderWorkspaceChrome();
   renderRoleUI();
-  setActiveView(state.role === "agent" ? "bookings" : "listings");
+  setActiveView(state.role === "admin" ? "admin" : state.role === "agent" ? "bookings" : "listings");
   renderWorkspaceChrome();
 }
 
@@ -1572,9 +1757,10 @@ function showRoleGate() {
 function getSessionUser(user, roleOverride = "") {
   const metadata = user.user_metadata || {};
   const email = user.email || "";
+  const resolvedRole = normalizeRole(roleOverride || metadata.role);
   return {
     id: user.id,
-    role: roleOverride === "agent" || metadata.role === "agent" ? "agent" : "seeker",
+    role: resolvedRole,
     name: metadata.full_name || metadata.name || email.split("@")[0] || "HanStay User",
     email,
     contact: metadata.contact || email
@@ -1582,8 +1768,17 @@ function getSessionUser(user, roleOverride = "") {
 }
 
 async function getSupabaseUserRole(user) {
+  if (user.user_metadata?.role === "admin") return "admin";
   if (user.user_metadata?.role === "agent") return "agent";
   if (!supabaseClient || !user.email) return "seeker";
+
+  const { data: adminData, error: adminError } = await supabaseClient
+    .from("admin_accounts")
+    .select("email")
+    .eq("email", user.email.toLowerCase())
+    .maybeSingle();
+
+  if (!adminError && adminData?.email) return "admin";
 
   const { data, error } = await supabaseClient
     .from("agent_accounts")
@@ -1664,7 +1859,9 @@ async function authenticateSupabaseUser(email, password) {
   if (data.user) {
     await applyAuthenticatedUser(data.user);
     await loadRemoteBookings();
+    await loadCommunityListings();
     startBookingRealtime();
+    startCommunityListingRealtime();
   }
 }
 
@@ -1700,7 +1897,9 @@ async function registerSupabaseUser(email, password, role = "seeker") {
     elements.loginResult.textContent = "";
     await applyAuthenticatedUser(data.user);
     await loadRemoteBookings();
+    await loadCommunityListings();
     startBookingRealtime();
+    startCommunityListingRealtime();
   } else {
     elements.loginResult.textContent = text("signupConfirmation");
   }
@@ -1708,9 +1907,12 @@ async function registerSupabaseUser(email, password, role = "seeker") {
 
 async function logout() {
   await stopBookingRealtime();
+  await stopCommunityListingRealtime();
   if (supabaseClient) await supabaseClient.auth.signOut();
   localStorage.removeItem(storageKeys.authUser);
   state.currentUser = null;
+  communityListings = [];
+  communitySubmissions = [];
   elements.loginPassword.value = "";
   showLoginGate(text("loggedOut"));
 }
@@ -1739,7 +1941,9 @@ async function initializeSupabaseAuth() {
   if (user && !error) {
     await applyAuthenticatedUser(user, { persist: false });
     await loadRemoteBookings();
+    await loadCommunityListings();
     startBookingRealtime();
+    startCommunityListingRealtime();
   } else {
     showLoginGate();
   }
@@ -1748,13 +1952,18 @@ async function initializeSupabaseAuth() {
     if ((event === "SIGNED_IN" || event === "TOKEN_REFRESHED") && session?.user) {
       await applyAuthenticatedUser(session.user, { persist: false });
       await loadRemoteBookings();
+      await loadCommunityListings();
       startBookingRealtime();
+      startCommunityListingRealtime();
     }
     if (event === "SIGNED_OUT") {
       await stopBookingRealtime();
+      await stopCommunityListingRealtime();
       localStorage.removeItem(storageKeys.authUser);
       state.currentUser = null;
       state.bookings = [];
+      communityListings = [];
+      communitySubmissions = [];
       saveBookings();
       showLoginGate();
     }
@@ -1770,9 +1979,15 @@ function loadAppState() {
     const savedBookings = JSON.parse(localStorage.getItem(storageKeys.bookings) || "[]");
 
     if (savedLang === "zh" || savedLang === "ko") state.lang = savedLang;
-    if (savedRole === "seeker" || savedRole === "agent") state.role = savedRole;
+    if (["seeker", "agent", "admin"].includes(savedRole)) state.role = savedRole;
     if (savedAuthUser?.email) state.currentUser = savedAuthUser;
-    if (savedProfile?.seeker && savedProfile?.agent) state.profile = savedProfile;
+    if (savedProfile?.seeker && savedProfile?.agent) {
+      state.profile = {
+        seeker: savedProfile.seeker,
+        agent: savedProfile.agent,
+        admin: savedProfile.admin || { name: "", contact: "" }
+      };
+    }
     if (Array.isArray(savedBookings)) state.bookings = savedBookings;
   } catch {
     state.bookings = [];
@@ -1959,12 +2174,232 @@ async function stopBookingRealtime() {
   bookingRealtimeChannel = null;
 }
 
+function safeCommunityImageUrl(url) {
+  const fallback = "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80";
+  if (!url) return fallback;
+  try {
+    const parsed = new URL(url);
+    return ["http:", "https:"].includes(parsed.protocol) ? parsed.href : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizeCommunityNumber(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) && number >= 0 ? Math.round(number) : fallback;
+}
+
+function getCommunityStatusLabel(status) {
+  if (status === "approved") return text("communityStatusApproved");
+  if (status === "rejected") return text("communityStatusRejected");
+  return text("communityStatusPending");
+}
+
+function communityListingFromRow(row) {
+  const school = row.school || "SKKU";
+  const title = row.title || text("defaultListing");
+  const schoolName = row.school_name || text("schools")[school] || school;
+  const station = row.station || row.address || schoolName;
+  return {
+    id: `community-${row.id}`,
+    communityId: row.id,
+    title: escapeHtml(title),
+    school,
+    schoolName: escapeHtml(schoolName),
+    room: row.room_type || "one-room",
+    rent: normalizeCommunityNumber(row.rent),
+    deposit: normalizeCommunityNumber(row.deposit),
+    management: normalizeCommunityNumber(row.management),
+    distance: normalizeCommunityNumber(row.distance, 15),
+    station: escapeHtml(station),
+    naverQuery: `${schoolName} ${station} ${row.room_type || ""} 월세`,
+    coords: schoolAreaCoords[school] || schoolAreaCoords.SKKU,
+    availableDays: 14,
+    verified: true,
+    chinese: true,
+    image: safeCommunityImageUrl(row.image_url),
+    tags: [text("communitySourceTag"), text("communityApprovedTag")],
+    risks: [],
+    map: { x: 54, y: 50 },
+    scores: { light: 70, transport: 76, quiet: 68 },
+    description: escapeHtml(row.description || ""),
+    ko: {
+      title: escapeHtml(title),
+      schoolName: escapeHtml(schoolName),
+      station: escapeHtml(station),
+      tags: [text("communitySourceTag"), text("communityApprovedTag")],
+      risks: [],
+      description: escapeHtml(row.description || "")
+    }
+  };
+}
+
+function rebuildCommunityListings() {
+  communityListings = communitySubmissions.filter((row) => row.status === "approved").map(communityListingFromRow);
+}
+
+function communityListingToSupabaseRow(formData) {
+  const school = formData.school || "SKKU";
+  return {
+    submitter_id: state.currentUser.id,
+    submitter_email: state.currentUser.email,
+    title: formData.title.trim(),
+    school,
+    school_name: text("schools")[school] || school,
+    room_type: formData.roomType || "one-room",
+    rent: normalizeCommunityNumber(formData.rent),
+    deposit: normalizeCommunityNumber(formData.deposit),
+    management: normalizeCommunityNumber(formData.management),
+    distance: normalizeCommunityNumber(formData.distance, 15),
+    station: formData.station.trim(),
+    address: formData.address.trim(),
+    image_url: formData.imageUrl.trim(),
+    contact: formData.contact.trim(),
+    description: formData.description.trim(),
+    status: "pending",
+    updated_at: new Date().toISOString()
+  };
+}
+
+async function loadCommunityListings() {
+  if (!supabaseClient || !state.currentUser?.id) return;
+
+  const { data, error } = await supabaseClient
+    .from(supabaseCommunityListingsTable)
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.warn("Failed to load community listings", error);
+    if (elements.listingSubmitStatus) {
+      elements.listingSubmitStatus.textContent = text("communityLoadFailed", { error: formatCloudError(error) });
+    }
+    return;
+  }
+
+  communitySubmissions = Array.isArray(data) ? data : [];
+  rebuildCommunityListings();
+  renderBookingOptions();
+  renderListings();
+  renderCommunityAdmin();
+}
+
+async function createCommunityListing(formData) {
+  const unavailableError = getRemoteBookingsUnavailableError();
+  if (unavailableError) throw unavailableError;
+
+  const { data, error } = await supabaseClient
+    .from(supabaseCommunityListingsTable)
+    .insert(communityListingToSupabaseRow(formData))
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+async function updateCommunityListingStatus(listingId, status) {
+  if (state.role !== "admin") throw new Error(text("communityReviewFailed", { error: "admin only" }));
+  const { data, error } = await supabaseClient
+    .from(supabaseCommunityListingsTable)
+    .update({
+      status,
+      reviewed_by: state.currentUser.id,
+      reviewed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", listingId)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+function startCommunityListingRealtime() {
+  if (!canUseRemoteBookings() || !supabaseClient.channel || communityListingRealtimeChannel) return;
+  communityListingRealtimeChannel = supabaseClient
+    .channel("hanstay-community-listings")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: supabaseCommunityListingsTable },
+      () => loadCommunityListings()
+    )
+    .subscribe();
+}
+
+async function stopCommunityListingRealtime() {
+  if (!communityListingRealtimeChannel || !supabaseClient) return;
+  await supabaseClient.removeChannel(communityListingRealtimeChannel);
+  communityListingRealtimeChannel = null;
+}
+
+function renderCommunityAdmin() {
+  if (!elements.adminListingQueue) return;
+  if (state.role !== "admin") {
+    elements.adminListingQueue.innerHTML = "";
+    if (elements.adminListingCount) elements.adminListingCount.textContent = "0";
+    return;
+  }
+
+  const rows = [...communitySubmissions].sort((a, b) => {
+    const statusScore = { pending: 0, approved: 1, rejected: 2 };
+    return (statusScore[a.status] ?? 3) - (statusScore[b.status] ?? 3) || new Date(b.created_at) - new Date(a.created_at);
+  });
+
+  if (elements.adminListingCount) {
+    elements.adminListingCount.textContent = String(rows.filter((row) => row.status === "pending").length);
+  }
+
+  if (rows.length === 0) {
+    elements.adminListingQueue.innerHTML = `<div class="empty-state">${text("communityEmptyAdmin")}</div>`;
+    return;
+  }
+
+  elements.adminListingQueue.innerHTML = rows
+    .map((row) => {
+      const status = row.status || "pending";
+      return `
+        <article class="submission-card">
+          <div class="submission-card-head">
+            <div>
+              <h4>${escapeHtml(row.title)}</h4>
+              <p>${escapeHtml(row.description || "")}</p>
+            </div>
+            <span class="status-pill ${status}">${getCommunityStatusLabel(status)}</span>
+          </div>
+          <div class="submission-meta">
+            <span>${escapeHtml(row.school_name || row.school || "")}</span>
+            <span>${escapeHtml(row.room_type || "")}</span>
+            <span>${text("rentMonthly", { rent: row.rent || 0 })}</span>
+            <span>${text("deposit", { deposit: row.deposit || 0 })}</span>
+            <span>${escapeHtml(row.station || row.address || "")}</span>
+            <span>${text("communitySubmitter")}: ${escapeHtml(row.submitter_email || "")}</span>
+            <span>${text("communityContact")}: ${escapeHtml(row.contact || "")}</span>
+          </div>
+          ${
+            status === "pending"
+              ? `<div class="submission-actions">
+                  <button class="primary-button" data-approve-listing="${row.id}"><i data-lucide="check"></i>${text("approveListing")}</button>
+                  <button class="secondary-button" data-reject-listing="${row.id}"><i data-lucide="x"></i>${text("rejectListing")}</button>
+                </div>`
+              : ""
+          }
+        </article>
+      `;
+    })
+    .join("");
+  refreshIcons();
+}
+
 function getRoleText(role = state.role) {
+  if (role === "admin") return text("roleAdmin");
   return role === "agent" ? text("roleAgent") : text("roleSeeker");
 }
 
 function getCurrentProfile() {
-  return state.profile[state.role];
+  return state.profile[state.role] || state.profile.seeker;
 }
 
 function getStatusMeta(status) {
@@ -1990,8 +2425,16 @@ function formatDateTime(value) {
   });
 }
 
+function getAllListings() {
+  return [...communityListings, ...listings];
+}
+
+function findListingById(listingId) {
+  return getAllListings().find((item) => String(item.id) === String(listingId));
+}
+
 function renderBookingOptions() {
-  elements.bookingListing.innerHTML = listings
+  elements.bookingListing.innerHTML = getAllListings()
     .map((listing) => `<option value="${listing.id}">${localizedListing(listing, "title")} · ${localizedListing(listing, "schoolName")}</option>`)
     .join("");
 }
@@ -2007,11 +2450,12 @@ function renderRoleUI() {
   elements.roleBadge.textContent = getRoleText();
   elements.profileName.value = profile.name;
   elements.profileContact.value = profile.contact;
-  elements.profileNameLabel.textContent = state.role === "agent" ? text("agentName") : text("name");
-  elements.profileContactLabel.textContent = state.role === "agent" ? text("agentContact") : text("contact");
+  elements.profileNameLabel.textContent = state.role === "admin" ? text("adminName") : state.role === "agent" ? text("agentName") : text("name");
+  elements.profileContactLabel.textContent = state.role === "admin" ? text("adminContact") : state.role === "agent" ? text("agentContact") : text("contact");
   elements.profileName.placeholder = state.role === "agent" ? text("agentNamePlaceholder") : text("namePlaceholder");
   elements.profileContact.placeholder = state.role === "agent" ? text("agentContactPlaceholder") : text("contactPlaceholder");
-  elements.saveProfile.innerHTML = `<i data-lucide="save"></i>${state.role === "agent" ? text("saveProfileAgent") : text("saveProfileSeeker")}`;
+  elements.saveProfile.innerHTML = `<i data-lucide="save"></i>${state.role === "admin" ? text("saveProfileAdmin") : state.role === "agent" ? text("saveProfileAgent") : text("saveProfileSeeker")}`;
+  elements.switchRole.hidden = state.role === "admin";
   elements.profileStatus.textContent = `${text("currentRole")}：${getRoleText()}${profile.name ? ` · ${profile.name}` : ""}`;
   renderAuthUser();
 
@@ -2021,6 +2465,7 @@ function renderRoleUI() {
   }
 
   renderBookingDashboard();
+  renderCommunityAdmin();
   setActiveView(state.activeView);
   refreshIcons();
 }
@@ -2079,7 +2524,7 @@ function renderBookingDashboard() {
 
 function renderBookingCard(booking, isAgent) {
   const status = getStatusMeta(booking.status);
-  const listing = listings.find((item) => item.id === Number(booking.listingId));
+  const listing = findListingById(booking.listingId);
   const listingTitle = listing ? localizedListing(listing, "title") : booking.listingTitle;
   const mapUrl = getNaverMapUrl(listing?.naverQuery || listingTitle);
 
@@ -2201,7 +2646,7 @@ async function updateBooking(bookingId, patch) {
 }
 
 function getFilteredListings() {
-  const filtered = listings.filter((listing) => {
+  const filtered = getAllListings().filter((listing) => {
     const schoolMatch = state.school === "all" || listing.school === state.school;
     const rentMatch = listing.rent <= state.rent;
     const roomMatch = state.room === "all" || listing.room === state.room;
@@ -2254,7 +2699,7 @@ function renderListings() {
               <span><i data-lucide="footprints"></i>${text("distance", { distance: listing.distance })}</span>
             </div>
             <div class="source-row">
-              <span><i data-lucide="database-zap"></i>${text("liveSource")}</span>
+              <span><i data-lucide="database-zap"></i>${listing.communityId ? text("communitySourceTag") : text("liveSource")}</span>
               <span>${text("sourceKeyword", { query: listing.naverQuery })}</span>
             </div>
             <div class="tag-row">${tags.join("")}</div>
@@ -2367,7 +2812,7 @@ function renderGuides() {
 }
 
 function openDrawer(listingId) {
-  const listing = listings.find((item) => item.id === Number(listingId));
+  const listing = findListingById(listingId);
   if (!listing) return;
 
   elements.drawerContent.innerHTML = `
@@ -2833,7 +3278,7 @@ function renderScore(label, value) {
 }
 
 function prefillBooking(listingId) {
-  const listing = listings.find((item) => item.id === Number(listingId));
+  const listing = findListingById(listingId);
   if (!listing) return;
   elements.bookingListing.value = String(listing.id);
   elements.bookingForm.notes.value = text("prefillingNotes", { title: localizedListing(listing, "title") });
@@ -2945,6 +3390,8 @@ function bindEvents() {
     const scheduleButton = event.target.closest("[data-schedule-booking]");
     const completeButton = event.target.closest("[data-complete-booking]");
     const cancelButton = event.target.closest("[data-cancel-booking]");
+    const approveListingButton = event.target.closest("[data-approve-listing]");
+    const rejectListingButton = event.target.closest("[data-reject-listing]");
 
     if (externalLink) {
       event.preventDefault();
@@ -3005,6 +3452,26 @@ function bindEvents() {
         agentNote: text("cancelledDefaultNote")
       });
     }
+    if (approveListingButton) {
+      updateCommunityListingStatus(approveListingButton.dataset.approveListing, "approved")
+        .then(() => loadCommunityListings())
+        .then(() => {
+          if (elements.adminReviewStatus) elements.adminReviewStatus.textContent = text("communityApproved");
+        })
+        .catch((error) => {
+          if (elements.adminReviewStatus) elements.adminReviewStatus.textContent = text("communityReviewFailed", { error: formatCloudError(error) });
+        });
+    }
+    if (rejectListingButton) {
+      updateCommunityListingStatus(rejectListingButton.dataset.rejectListing, "rejected")
+        .then(() => loadCommunityListings())
+        .then(() => {
+          if (elements.adminReviewStatus) elements.adminReviewStatus.textContent = text("communityRejected");
+        })
+        .catch((error) => {
+          if (elements.adminReviewStatus) elements.adminReviewStatus.textContent = text("communityReviewFailed", { error: formatCloudError(error) });
+        });
+    }
   });
 
   document.querySelector("#closeDrawer").addEventListener("click", closeDrawer);
@@ -3054,7 +3521,7 @@ function bindEvents() {
   elements.bookingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(elements.bookingForm).entries());
-    const listing = listings.find((item) => item.id === Number(data.listingId));
+    const listing = findListingById(data.listingId);
     const booking = {
       id: `BK-${Date.now()}`,
       userId: state.currentUser?.id || "",
@@ -3086,7 +3553,7 @@ function bindEvents() {
     saveProfileState();
     saveBookings();
     elements.bookingForm.reset();
-    elements.bookingListing.value = String(listings[0].id);
+    elements.bookingListing.value = String(getAllListings()[0]?.id || "");
     renderRoleUI();
     setActiveView("bookings");
     elements.bookingDashboard.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -3100,6 +3567,22 @@ function bindEvents() {
     } catch (error) {
       console.warn("Failed to create Supabase booking", error);
       elements.bookingResult.textContent = text("bookingCloudSaveFailedDetail", { error: formatCloudError(error) });
+    }
+  });
+
+  elements.listingSubmitForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = Object.fromEntries(new FormData(elements.listingSubmitForm).entries());
+    elements.listingSubmitStatus.textContent = text("communitySyncing");
+
+    try {
+      await createCommunityListing(formData);
+      elements.listingSubmitForm.reset();
+      elements.listingSubmitStatus.textContent = text("communitySubmitted");
+      await loadCommunityListings();
+    } catch (error) {
+      console.warn("Failed to submit community listing", error);
+      elements.listingSubmitStatus.textContent = text("communitySubmitFailed", { error: formatCloudError(error) });
     }
   });
 }

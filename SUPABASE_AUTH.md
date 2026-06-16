@@ -51,6 +51,34 @@ After that, new viewing requests are saved to Supabase `public.bookings` instead
 
 If the app says `permission denied for table bookings`, run the latest `SUPABASE_BOOKINGS.sql` again. The script grants `select`, `insert`, and `update` privileges to Supabase's authenticated role, then RLS decides which rows each user can see.
 
+## User Submitted Listings
+
+The app also supports user-submitted housing listings:
+
+1. Run the latest `SUPABASE_BOOKINGS.sql` in Supabase SQL Editor.
+2. Users submit listings from the `上传房源 / 매물 등록` page.
+3. Listings are saved to `public.community_listings` with `status = 'pending'`.
+4. Approved listings are merged into the frontend listing list.
+5. Rejected listings stay private and are not shown as public listings.
+
+Only a super admin can approve or reject listings. Add your admin email in Supabase:
+
+```sql
+insert into public.admin_accounts(email)
+values ('your-admin-email@example.com')
+on conflict (email) do nothing;
+```
+
+Then log out and log back in with that email. The app will open the admin review workspace automatically.
+
+You can also set Auth metadata manually:
+
+```sql
+update auth.users
+set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+where email = 'your-admin-email@example.com';
+```
+
 Student accounts can read their own requests. Agent accounts can read all requests when their user metadata contains:
 
 ```json

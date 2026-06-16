@@ -140,6 +140,10 @@
               <i data-lucide="building-2"></i>
               <span>真实房源入口</span>
             </button>
+            <button class="nav-item seeker-nav" data-view="submit" type="button">
+              <i data-lucide="upload-cloud"></i>
+              <span>上传房源</span>
+            </button>
             <button class="nav-item seeker-nav" data-view="bookings" type="button">
               <i data-lucide="video"></i>
               <span>预约中心</span>
@@ -147,6 +151,10 @@
             <button class="nav-item agent-nav" data-view="bookings" type="button">
               <i data-lucide="clipboard-list"></i>
               <span>看房任务</span>
+            </button>
+            <button class="nav-item admin-nav" data-view="admin" type="button">
+              <i data-lucide="shield-check"></i>
+              <span>审核后台</span>
             </button>
             <button class="nav-item" data-view="maps" type="button">
               <i data-lucide="map"></i>
@@ -386,6 +394,119 @@
               </button>
             </div>
             <div class="listing-list" id="listingList"></div>
+          </section>
+        </section>
+
+        <section class="view-section seeker-only" data-view-panel="submit">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Community Listings</p>
+              <h3>上传房源</h3>
+            </div>
+            <p>提交后会先进入审核队列，超级账号审核通过后才会展示在房源列表里。</p>
+          </div>
+
+          <section class="listing-submit-panel">
+            <div class="section-head tight">
+              <div>
+                <p class="eyebrow">Listing Submission</p>
+                <h3>房源投稿表</h3>
+              </div>
+              <i data-lucide="upload-cloud"></i>
+            </div>
+            <form id="listingSubmitForm" class="listing-submit-form">
+              <div class="form-grid">
+                <label class="field">
+                  <span>房源标题</span>
+                  <input name="title" placeholder="例如：栗田洞近成均馆一居室" required />
+                </label>
+                <label class="field">
+                  <span>学校 / 区域</span>
+                  <select name="school" required>
+                    <option value="SKKU">水原成均馆 / SKKU Suwon</option>
+                    <option value="Yonsei">延世大学</option>
+                    <option value="Korea">高丽大学</option>
+                    <option value="SNU">首尔大学</option>
+                    <option value="Hanyang">汉阳大学</option>
+                  </select>
+                </label>
+              </div>
+              <div class="form-grid compact-fields">
+                <label class="field">
+                  <span>房型</span>
+                  <select name="roomType" required>
+                    <option value="one-room">One-room</option>
+                    <option value="two-room">Two-room</option>
+                    <option value="gosiwon">考试院</option>
+                    <option value="officetel">Officetel</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>月租</span>
+                  <input name="rent" type="number" min="0" step="1" placeholder="65" required />
+                </label>
+                <label class="field">
+                  <span>保证金</span>
+                  <input name="deposit" type="number" min="0" step="10" placeholder="500" required />
+                </label>
+                <label class="field">
+                  <span>管理费</span>
+                  <input name="management" type="number" min="0" step="1" placeholder="8" />
+                </label>
+              </div>
+              <div class="form-grid">
+                <label class="field">
+                  <span>地点 / 地铁站</span>
+                  <input name="station" placeholder="例如：성균관대역 / 율전동" required />
+                </label>
+                <label class="field">
+                  <span>到学校分钟</span>
+                  <input name="distance" type="number" min="0" step="1" placeholder="12" required />
+                </label>
+              </div>
+              <label class="field">
+                <span>详细地址</span>
+                <input name="address" placeholder="例如：수원시 장안구 율전동" />
+              </label>
+              <label class="field">
+                <span>图片 URL</span>
+                <input name="imageUrl" type="url" placeholder="https://..." />
+              </label>
+              <label class="field">
+                <span>联系方式</span>
+                <input name="contact" placeholder="微信 / KakaoTalk / 邮箱" required />
+              </label>
+              <label class="field">
+                <span>房源说明</span>
+                <textarea name="description" placeholder="写清楚位置、租金包含内容、入住时间、注意事项。" required></textarea>
+              </label>
+              <button class="primary-button full" type="submit">
+                <i data-lucide="send"></i>
+                提交审核
+              </button>
+              <p class="form-note" id="listingSubmitStatus" role="status"></p>
+            </form>
+          </section>
+        </section>
+
+        <section class="view-section admin-only" data-view-panel="admin">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Admin Review</p>
+              <h3>房源审核后台</h3>
+            </div>
+            <p>超级账号在这里审核用户投稿。通过后房源会进入前端列表，拒绝后不会公开展示。</p>
+          </div>
+          <section class="admin-review-panel">
+            <div class="section-head tight">
+              <div>
+                <p class="eyebrow">Review Queue</p>
+                <h3>待审核房源</h3>
+              </div>
+              <span class="status-pill" id="adminListingCount">0</span>
+            </div>
+            <div class="admin-listing-queue" id="adminListingQueue"></div>
+            <p class="form-note" id="adminReviewStatus" role="status"></p>
           </section>
         </section>
 

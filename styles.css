@@ -259,7 +259,14 @@ button {
 body[data-role="agent"] .seeker-only,
 body[data-role="agent"] .seeker-nav,
 body[data-role="agent"] .nav-item[data-view="listings"],
-body[data-role="seeker"] .agent-nav {
+body[data-role="agent"] .admin-nav,
+body[data-role="agent"] .admin-only,
+body[data-role="seeker"] .agent-nav,
+body[data-role="seeker"] .admin-nav,
+body[data-role="seeker"] .admin-only,
+body[data-role="admin"] .seeker-only,
+body[data-role="admin"] .seeker-nav,
+body[data-role="admin"] .agent-nav {
   display: none !important;
 }
 
@@ -882,6 +889,77 @@ body.suwon-focus .listing-area {
   margin-bottom: 0;
 }
 
+.listing-submit-panel,
+.admin-review-panel {
+  padding: 18px;
+}
+
+.listing-submit-form {
+  display: grid;
+  gap: 2px;
+}
+
+.compact-fields {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-listing-queue {
+  display: grid;
+  gap: 12px;
+}
+
+.submission-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  padding: 14px;
+}
+
+.submission-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.submission-card h4 {
+  margin: 0 0 5px;
+  font-size: 18px;
+}
+
+.submission-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.submission-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.submission-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status-pill.approved {
+  background: var(--green-soft);
+  color: var(--teal-dark);
+}
+
+.status-pill.rejected {
+  background: var(--coral-soft);
+  color: #9c422d;
+}
+
 .map-panel-full,
 .guide-workspace .knowledge-panel {
   padding: 18px;
@@ -912,7 +990,9 @@ body.suwon-focus .listing-area {
 .booking-dashboard,
 .map-panel,
 .booking-panel,
-.knowledge-panel {
+.knowledge-panel,
+.listing-submit-panel,
+.admin-review-panel {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
@@ -1787,7 +1867,8 @@ body.suwon-focus .listing-area {
   }
 
   .booking-workspace,
-  .guide-workspace {
+  .guide-workspace,
+  .compact-fields {
     grid-template-columns: 1fr;
   }
 }
