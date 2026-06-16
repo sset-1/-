@@ -434,6 +434,8 @@ const translations = {
     rejectListing: "拒绝",
     communitySourceTag: "用户投稿",
     communityApprovedTag: "后台审核通过",
+    communityPendingPrivateTag: "待审核，仅自己可见",
+    communityRejectedPrivateTag: "已拒绝，仅自己可见",
     adminName: "管理员姓名",
     adminContact: "管理员联系方式",
     saveProfileAdmin: "保存管理员信息",
@@ -676,6 +678,8 @@ const translations = {
     rejectListing: "거절",
     communitySourceTag: "사용자 제출",
     communityApprovedTag: "관리자 승인",
+    communityPendingPrivateTag: "심사 대기, 본인만 표시",
+    communityRejectedPrivateTag: "거절됨, 본인만 표시",
     adminName: "관리자 이름",
     adminContact: "관리자 연락처",
     saveProfileAdmin: "관리자 정보 저장",
@@ -2435,15 +2439,37 @@ function getCommunityStatusLabel(status) {
   return text("communityStatusPending");
 }
 
+function isOwnCommunitySubmission(row) {
+  if (!state.currentUser) return false;
+  const userEmail = String(state.currentUser.email || "").toLowerCase();
+  const submitterEmail = String(row.submitter_email || "").toLowerCase();
+  return row.submitter_id === state.currentUser.id || (userEmail && submitterEmail === userEmail);
+}
+
+function shouldShowCommunityListingInListings(row) {
+  return row.status === "approved" || isOwnCommunitySubmission(row) || state.role === "admin";
+}
+
+function getCommunityListingTags(row) {
+  const tags = [text("communitySourceTag")];
+  if (row.status === "approved") tags.push(text("communityApprovedTag"));
+  else if (row.status === "rejected") tags.push(text("communityRejectedPrivateTag"));
+  else tags.push(text("communityPendingPrivateTag"));
+  return tags;
+}
+
 function communityListingFromRow(row) {
   const school = row.school || "SKKU";
   const title = row.title || text("defaultListing");
   const schoolName = row.school_name || text("schools")[school] || school;
   const station = row.station || row.address || schoolName;
   const address = row.address || station;
+  const tags = getCommunityListingTags(row);
   return {
     id: `community-${row.id}`,
     communityId: row.id,
+    communityStatus: row.status || "pending",
+    ownCommunityListing: isOwnCommunitySubmission(row),
     title: escapeHtml(title),
     school,
     schoolName: escapeHtml(schoolName),
@@ -2457,10 +2483,10 @@ function communityListingFromRow(row) {
     naverQuery: `${schoolName} ${address} ${station} ${row.room_type || ""} 월세`,
     coords: schoolAreaCoords[school] || schoolAreaCoords.SKKU,
     availableDays: 14,
-    verified: true,
+    verified: row.status === "approved",
     chinese: true,
     image: safeCommunityImageUrl(row.image_url),
-    tags: [text("communitySourceTag"), text("communityApprovedTag")],
+    tags,
     risks: [],
     map: { x: 54, y: 50 },
     scores: { light: 70, transport: 76, quiet: 68 },
@@ -2470,7 +2496,7 @@ function communityListingFromRow(row) {
       schoolName: escapeHtml(schoolName),
       station: escapeHtml(station),
       address: escapeHtml(address),
-      tags: [text("communitySourceTag"), text("communityApprovedTag")],
+      tags,
       risks: [],
       description: escapeHtml(row.description || "")
     }
@@ -2478,7 +2504,7 @@ function communityListingFromRow(row) {
 }
 
 function rebuildCommunityListings() {
-  communityListings = communitySubmissions.filter((row) => row.status === "approved").map(communityListingFromRow);
+  communityListings = communitySubmissions.filter(shouldShowCommunityListingInListings).map(communityListingFromRow);
 }
 
 function communityListingToSupabaseRow(formData) {
@@ -2889,6 +2915,9 @@ async function updateBooking(bookingId, patch) {
 
 function getFilteredListings() {
   const filtered = getAllListings().filter((listing) => {
+    const privateCommunityVisible =
+      listing.communityId && listing.communityStatus !== "approved" && (listing.ownCommunityListing || state.role === "admin");
+    if (privateCommunityVisible) return true;
     const schoolMatch = state.school === "all" || listing.school === state.school;
     const rentMatch = listing.rent <= state.rent;
     const roomMatch = state.room === "all" || listing.room === state.room;
@@ -2949,7 +2978,7 @@ function renderListings() {
             <div class="tag-row">${tags.join("")}</div>
             <div class="listing-actions">
               <button class="secondary-button" data-detail="${listing.id}">${text("detail")}</button>
-              <button class="secondary-button" data-book="${listing.id}">${text("bookThis")}</button>
+              ${!listing.communityId || listing.communityStatus === "approved" ? `<button class="secondary-button" data-book="${listing.id}">${text("bookThis")}</button>` : ""}
               <a class="secondary-button link-button real-source naver-land" href="${getNaverLandUrl(listing)}" target="_blank" rel="noopener noreferrer">
                 <i data-lucide="building-2"></i>
                 ${text("naverLand")}
@@ -3064,10 +3093,14 @@ function openDrawer(listingId) {
       <i data-lucide="map"></i>
       ${text("drawerMap")}
     </a>
-    <button class="primary-button full" data-book="${listing.id}">
-      <i data-lucide="video"></i>
-      ${text("drawerBook")}
-    </button>
+    ${
+      !listing.communityId || listing.communityStatus === "approved"
+        ? `<button class="primary-button full" data-book="${listing.id}">
+            <i data-lucide="video"></i>
+            ${text("drawerBook")}
+          </button>`
+        : ""
+    }
   `;
 
   elements.drawerBackdrop.hidden = false;
