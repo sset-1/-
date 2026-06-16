@@ -415,6 +415,28 @@
               <i data-lucide="upload-cloud"></i>
             </div>
             <form id="listingSubmitForm" class="listing-submit-form">
+              <div class="ocr-upload-box" id="listingOcrPanel">
+                <div class="ocr-upload-copy">
+                  <p class="eyebrow">Free OCR</p>
+                  <h4 id="listingOcrTitle">图片自动识别</h4>
+                  <p id="listingOcrHelp">上传房源截图，系统会在浏览器里免费识别文字并预填表单；提交前请自己确认。</p>
+                </div>
+                <div class="ocr-upload-controls">
+                  <label class="field">
+                    <span>房源截图</span>
+                    <input id="listingImageOcrInput" type="file" accept="image/*" />
+                  </label>
+                  <button class="secondary-button" id="runListingOcr" type="button">
+                    <i data-lucide="scan-text"></i>
+                    识别图片并填表
+                  </button>
+                </div>
+                <p class="form-note" id="listingOcrStatus" role="status"></p>
+                <label class="field ocr-preview-field" id="listingOcrPreviewField" hidden>
+                  <span id="listingOcrPreviewLabel">识别文字预览</span>
+                  <textarea id="listingOcrText" readonly></textarea>
+                </label>
+              </div>
               <div class="form-grid">
                 <label class="field">
                   <span>房源标题</span>
@@ -677,6 +699,7 @@
 
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="./supabase-config.js"></script>
     <script src="./app.js"></script>
   </body>

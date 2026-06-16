@@ -899,6 +899,51 @@ body.suwon-focus .listing-area {
   gap: 2px;
 }
 
+.ocr-upload-box {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px dashed #a9d6cf;
+  border-radius: var(--radius);
+  background: #f6fbfa;
+}
+
+.ocr-upload-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.ocr-upload-copy h4,
+.ocr-upload-copy p {
+  margin: 0;
+}
+
+.ocr-upload-copy h4 {
+  font-size: 17px;
+}
+
+.ocr-upload-copy p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.ocr-upload-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.ocr-upload-controls .secondary-button {
+  min-height: 48px;
+}
+
+.ocr-preview-field textarea {
+  min-height: 96px;
+  font-size: 13px;
+}
+
 .compact-fields {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
@@ -1868,6 +1913,7 @@ body.suwon-focus .listing-area {
 
   .booking-workspace,
   .guide-workspace,
+  .ocr-upload-controls,
   .compact-fields {
     grid-template-columns: 1fr;
   }

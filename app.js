@@ -384,6 +384,20 @@ const translations = {
     submitListingWorkspaceTitle: "上传房源",
     submitListingWorkspaceCopy: "用户可以提交真实房源信息。提交后不会立刻公开，需要超级账号审核通过。",
     submitListingPanelTitle: "房源投稿表",
+    listingOcrTitle: "图片自动识别",
+    listingOcrHelp: "上传房源截图，系统会在浏览器里免费识别文字并预填表单；图片不会上传，提交前请自己确认。",
+    listingOcrImageLabel: "房源截图",
+    listingOcrButton: "识别图片并填表",
+    listingOcrReady: "选择图片后点击识别。免费 OCR 首次加载会慢一点。",
+    listingOcrNoImage: "请先选择一张房源截图。",
+    listingOcrMissingEngine: "OCR 组件没有加载成功，请检查网络后刷新页面。",
+    listingOcrReading: "正在识别图片文字... {progress}%",
+    listingOcrParsing: "正在整理识别结果...",
+    listingOcrDone: "已识别并预填表单，请检查后再提交审核。",
+    listingOcrNoText: "没有识别到可用文字，请换一张更清晰的截图。",
+    listingOcrFailed: "识别失败：{error}",
+    listingOcrPreviewLabel: "识别文字预览",
+    listingOcrSuggestedTitle: "图片识别房源",
     adminReviewWorkspaceTitle: "房源审核后台",
     adminReviewWorkspaceCopy: "超级账号在这里审核用户投稿。通过后房源会进入前端列表，拒绝后不会公开展示。",
     adminReviewPanelTitle: "待审核房源",
@@ -597,6 +611,20 @@ const translations = {
     submitListingWorkspaceTitle: "매물 등록",
     submitListingWorkspaceCopy: "사용자가 직접 매물 정보를 제출할 수 있습니다. 제출 즉시 공개되지 않고 관리자 승인 후 표시됩니다.",
     submitListingPanelTitle: "매물 등록 폼",
+    listingOcrTitle: "이미지 자동 인식",
+    listingOcrHelp: "매물 스크린샷을 올리면 브라우저에서 무료 OCR로 문자를 읽고 폼을 채웁니다. 이미지는 업로드되지 않으며 제출 전 직접 확인하세요.",
+    listingOcrImageLabel: "매물 스크린샷",
+    listingOcrButton: "이미지 인식 후 채우기",
+    listingOcrReady: "이미지를 선택한 뒤 인식을 누르세요. 무료 OCR은 처음 로딩이 조금 느릴 수 있습니다.",
+    listingOcrNoImage: "먼저 매물 스크린샷을 선택하세요.",
+    listingOcrMissingEngine: "OCR 구성 요소를 불러오지 못했습니다. 네트워크를 확인하고 새로고침하세요.",
+    listingOcrReading: "이미지 문자를 인식하는 중... {progress}%",
+    listingOcrParsing: "인식 결과를 정리하는 중...",
+    listingOcrDone: "인식 결과로 폼을 채웠습니다. 제출 전 내용을 확인하세요.",
+    listingOcrNoText: "읽을 수 있는 문자를 찾지 못했습니다. 더 선명한 이미지로 다시 시도하세요.",
+    listingOcrFailed: "인식 실패: {error}",
+    listingOcrPreviewLabel: "인식 문자 미리보기",
+    listingOcrSuggestedTitle: "이미지 인식 매물",
     adminReviewWorkspaceTitle: "매물 심사 관리자",
     adminReviewWorkspaceCopy: "관리자 계정은 사용자 제출 매물을 승인하거나 거절합니다. 승인된 매물만 프론트 목록에 공개됩니다.",
     adminReviewPanelTitle: "심사 대기 매물",
@@ -1167,6 +1195,12 @@ const elements = {
   bookingResult: document.querySelector("#bookingResult"),
   listingSubmitForm: document.querySelector("#listingSubmitForm"),
   listingSubmitStatus: document.querySelector("#listingSubmitStatus"),
+  listingImageOcrInput: document.querySelector("#listingImageOcrInput"),
+  runListingOcr: document.querySelector("#runListingOcr"),
+  listingOcrStatus: document.querySelector("#listingOcrStatus"),
+  listingOcrPreviewField: document.querySelector("#listingOcrPreviewField"),
+  listingOcrPreviewLabel: document.querySelector("#listingOcrPreviewLabel"),
+  listingOcrText: document.querySelector("#listingOcrText"),
   adminListingQueue: document.querySelector("#adminListingQueue"),
   adminListingCount: document.querySelector("#adminListingCount"),
   adminReviewStatus: document.querySelector("#adminReviewStatus"),
@@ -1417,6 +1451,18 @@ function applyStaticLanguage() {
   setText('[data-view-panel="submit"] .workspace-heading h3', text("submitListingWorkspaceTitle"));
   setText('[data-view-panel="submit"] .workspace-heading p:last-child', text("submitListingWorkspaceCopy"));
   setText(".listing-submit-panel .section-head h3", text("submitListingPanelTitle"));
+  setText("#listingOcrTitle", text("listingOcrTitle"));
+  setText("#listingOcrHelp", text("listingOcrHelp"));
+  setText("#listingOcrPreviewLabel", text("listingOcrPreviewLabel"));
+  setFieldLabel(elements.listingImageOcrInput, text("listingOcrImageLabel"));
+  setButtonLabel(elements.runListingOcr, text("listingOcrButton"));
+  if (elements.listingOcrStatus) {
+    const readyStatuses = [translations.zh.listingOcrReady, translations.ko.listingOcrReady];
+    const currentOcrStatus = elements.listingOcrStatus.textContent.trim();
+    if (!currentOcrStatus || readyStatuses.includes(currentOcrStatus)) {
+      elements.listingOcrStatus.textContent = text("listingOcrReady");
+    }
+  }
   if (elements.listingSubmitForm) {
     const form = elements.listingSubmitForm;
     setFieldLabel(form.elements.title, text("submitListingTitleLabel"));
@@ -2188,6 +2234,192 @@ function safeCommunityImageUrl(url) {
 function normalizeCommunityNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) && number >= 0 ? Math.round(number) : fallback;
+}
+
+function cleanOcrNumber(value) {
+  const number = Number(String(value ?? "").replace(/[^\d.]/g, ""));
+  return Number.isFinite(number) && number >= 0 ? String(Math.round(number)) : "";
+}
+
+function findOcrNumber(textValue, patterns) {
+  for (const pattern of patterns) {
+    const match = textValue.match(pattern);
+    if (match?.[1]) return cleanOcrNumber(match[1]);
+  }
+  return "";
+}
+
+function findOcrLine(lines, patterns) {
+  return lines.find((line) => patterns.some((pattern) => pattern.test(line))) || "";
+}
+
+function detectOcrSchool(textValue) {
+  if (/성균관|성대|skku|율전|sungkyunkwan/i.test(textValue)) return "SKKU";
+  if (/연세|신촌|yonsei/i.test(textValue)) return "Yonsei";
+  if (/고려대|고려대학교|안암|korea university/i.test(textValue)) return "Korea";
+  if (/서울대|서울대학교|snu|서울대입구/i.test(textValue)) return "SNU";
+  if (/한양대|한양대학교|왕십리|hanyang/i.test(textValue)) return "Hanyang";
+  return "";
+}
+
+function detectOcrRoomType(textValue) {
+  if (/투룸|two[-\s]?room|2\s*room|2\s*룸/i.test(textValue)) return "two-room";
+  if (/고시원|고시텔|gosiwon/i.test(textValue)) return "gosiwon";
+  if (/오피스텔|officetel/i.test(textValue)) return "officetel";
+  if (/원룸|one[-\s]?room|1\s*room|studio/i.test(textValue)) return "one-room";
+  return "";
+}
+
+function findOcrDepositRentPair(textValue) {
+  const contextualMatch = textValue.match(/(?:월세|월\s*세|月租|rent)[^\d]{0,10}(\d{2,5})\s*\/\s*(\d{1,4})/i);
+  if (contextualMatch?.[1] && contextualMatch?.[2]) return contextualMatch;
+  const pairMatches = textValue.matchAll(/(\d{2,5})\s*\/\s*(\d{1,4})/g);
+  for (const match of pairMatches) {
+    const first = Number(match[1]);
+    const second = Number(match[2]);
+    const looksLikeDate = first >= 1900 && first <= 2100 && second >= 1 && second <= 12;
+    const looksLikeMonthlyRent = first >= 50 && second >= 5 && second <= 400;
+    if (!looksLikeDate && looksLikeMonthlyRent) return match;
+  }
+  return null;
+}
+
+function parseListingOcrText(rawText) {
+  const normalized = String(rawText || "")
+    .replace(/\r/g, "\n")
+    .replace(/[，,]/g, "")
+    .replace(/[／]/g, "/");
+  const lines = normalized
+    .split(/\n+/)
+    .map((line) => line.replace(/\s+/g, " ").trim())
+    .filter((line) => line.length > 1);
+  const joined = lines.join(" ");
+  const depositRentPair = findOcrDepositRentPair(joined);
+  const deposit = depositRentPair?.[1]
+    ? cleanOcrNumber(depositRentPair[1])
+    : findOcrNumber(joined, [
+        /(?:보증금|保证金|押金|deposit)[^\d]{0,14}(\d{2,6})/i,
+        /(?:전세|全租|jeonse)[^\d]{0,14}(\d{3,6})/i
+      ]);
+  const rent = depositRentPair?.[2]
+    ? cleanOcrNumber(depositRentPair[2])
+    : findOcrNumber(joined, [
+        /(?:월세|월\s*세|月租|rent|monthly)[^\d]{0,14}(\d{1,4})/i,
+        /(\d{1,4})\s*(?:만원|만)\s*(?:\/?\s*(?:월|월세|月))/i
+      ]);
+  const management = findOcrNumber(joined, [
+    /(?:관리비|管理费|management|maintenance)[^\d]{0,14}(\d{1,3})/i
+  ]);
+  const distance = findOcrNumber(joined, [
+    /(?:도보|徒歩|步行|walk)[^\d]{0,8}(\d{1,2})\s*(?:분|minute|min)/i,
+    /(\d{1,2})\s*(?:분|minute|min)[^\d]{0,8}(?:거리|도보|walk|步行)?/i
+  ]);
+  const contact = findOcrLine(lines, [
+    /010[-\s]?\d{3,4}[-\s]?\d{4}/,
+    /kakao|카카오|톡|wechat|微信|weixin|line|@/i
+  ]);
+  const locationLine = findOcrLine(lines, [
+    /성균관대역|성대역|율전동|수원|장안구|신촌|안암|서울대입구|왕십리/i,
+    /역|동|구|시|로|길/
+  ]);
+  const addressLine = findOcrLine(lines, [
+    /수원|서울|장안구|마포구|성북구|관악구|성동구|동대문구|율전동|신촌|안암/i,
+    /시|구|동|로|길/
+  ]);
+  const titleLine =
+    lines.find((line) => {
+      const useful = /(원룸|투룸|오피스텔|고시원|방|one[-\s]?room|two[-\s]?room|studio|월세|전세)/i.test(line);
+      const noisy = /(010|http|보증금|保证金|관리비|管理费|deposit|maintenance)/i.test(line);
+      return useful && !noisy && line.length <= 70;
+    }) ||
+    lines.find((line) => {
+      const noisy = /^[\d\s./:-]+$/.test(line) || /(010|http|kakao|카카오|微信|wechat)/i.test(line);
+      return !noisy && line.length >= 4 && line.length <= 70;
+    });
+  const imageUrl = (joined.match(/https?:\/\/[^\s]+/i) || [])[0] || "";
+
+  return {
+    title: titleLine || text("listingOcrSuggestedTitle"),
+    school: detectOcrSchool(joined),
+    roomType: detectOcrRoomType(joined),
+    rent,
+    deposit,
+    management,
+    distance,
+    station: locationLine,
+    address: addressLine,
+    imageUrl,
+    contact,
+    description: normalized.trim().slice(0, 1600)
+  };
+}
+
+function setOcrFormValue(form, fieldName, value, options = {}) {
+  const control = form?.elements?.[fieldName];
+  const cleanValue = String(value ?? "").trim();
+  if (!control || !cleanValue) return;
+  if (!options.overwrite && control.value.trim()) return;
+  control.value = cleanValue;
+}
+
+function applyOcrResultToForm(result) {
+  const form = elements.listingSubmitForm;
+  if (!form) return;
+  setOcrFormValue(form, "title", result.title);
+  setOcrFormValue(form, "school", result.school, { overwrite: true });
+  setOcrFormValue(form, "roomType", result.roomType, { overwrite: true });
+  setOcrFormValue(form, "rent", result.rent);
+  setOcrFormValue(form, "deposit", result.deposit);
+  setOcrFormValue(form, "management", result.management);
+  setOcrFormValue(form, "station", result.station);
+  setOcrFormValue(form, "distance", result.distance);
+  setOcrFormValue(form, "address", result.address);
+  setOcrFormValue(form, "imageUrl", result.imageUrl);
+  setOcrFormValue(form, "contact", result.contact);
+  setOcrFormValue(form, "description", result.description);
+}
+
+async function runListingOcr() {
+  const file = elements.listingImageOcrInput?.files?.[0];
+  if (!file) {
+    if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrNoImage");
+    return;
+  }
+  if (!window.Tesseract?.recognize) {
+    if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrMissingEngine");
+    return;
+  }
+
+  if (elements.runListingOcr) elements.runListingOcr.disabled = true;
+  if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrReading", { progress: 0 });
+
+  try {
+    const result = await window.Tesseract.recognize(file, "kor+eng+chi_sim", {
+      logger(message) {
+        if (message.status === "recognizing text" && elements.listingOcrStatus) {
+          const progress = Math.max(0, Math.min(100, Math.round((message.progress || 0) * 100)));
+          elements.listingOcrStatus.textContent = text("listingOcrReading", { progress });
+        }
+      }
+    });
+    const rawText = result?.data?.text?.trim() || "";
+    if (!rawText) {
+      if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrNoText");
+      return;
+    }
+    if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrParsing");
+    if (elements.listingOcrText) elements.listingOcrText.value = rawText;
+    if (elements.listingOcrPreviewField) elements.listingOcrPreviewField.hidden = false;
+    applyOcrResultToForm(parseListingOcrText(rawText));
+    if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrDone");
+  } catch (error) {
+    console.warn("Listing OCR failed", error);
+    if (elements.listingOcrStatus) {
+      elements.listingOcrStatus.textContent = text("listingOcrFailed", { error: formatCloudError(error) });
+    }
+  } finally {
+    if (elements.runListingOcr) elements.runListingOcr.disabled = false;
+  }
 }
 
 function getCommunityStatusLabel(status) {
@@ -3568,6 +3800,13 @@ function bindEvents() {
       console.warn("Failed to create Supabase booking", error);
       elements.bookingResult.textContent = text("bookingCloudSaveFailedDetail", { error: formatCloudError(error) });
     }
+  });
+
+  elements.runListingOcr?.addEventListener("click", runListingOcr);
+  elements.listingImageOcrInput?.addEventListener("change", () => {
+    if (elements.listingOcrStatus) elements.listingOcrStatus.textContent = text("listingOcrReady");
+    if (elements.listingOcrText) elements.listingOcrText.value = "";
+    if (elements.listingOcrPreviewField) elements.listingOcrPreviewField.hidden = true;
   });
 
   elements.listingSubmitForm?.addEventListener("submit", async (event) => {
