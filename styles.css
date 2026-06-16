@@ -688,8 +688,7 @@ textarea {
   font-weight: 700;
 }
 
-body.suwon-focus .listing-toolbar,
-body.suwon-focus .listing-area {
+body.suwon-focus .listing-toolbar {
   display: none !important;
 }
 

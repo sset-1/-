@@ -312,6 +312,7 @@ const state = {
 
 let communityListings = [];
 let communitySubmissions = [];
+let currentRealSearchResults = [];
 
 const storageKeys = {
   lang: "hanstay-lang",
@@ -845,6 +846,7 @@ Object.assign(translations.zh, {
   signupRoleAgent: "看房人",
   signupRoleHint: "只在注册新账号时保存身份；已有账号请在 Supabase 修改角色或重新注册。",
   authActionsLabel: "账号操作",
+  logoutButton: "退出登录",
   loginWarning: "现在使用 Supabase Auth 真实登录；如果开启邮箱验证，注册后需要先去邮箱确认。",
   loginUserLabel: "登录用户",
   notLoggedIn: "未登录",
@@ -940,6 +942,7 @@ Object.assign(translations.zh, {
   saleTransactionMeta: "{count}笔 · {period}",
   unnamedRealListing: "未命名房源",
   realSource: "真实来源",
+  ownListingDatabase: "本地房源样本",
   priceCheckNeeded: "价格待确认",
   realMonthlyRent: "月租 {rent}万",
   realDeposit: "保证金 {deposit}万",
@@ -976,6 +979,7 @@ Object.assign(translations.ko, {
   signupRoleAgent: "방 확인 담당",
   signupRoleHint: "새 계정 가입 때 역할이 저장됩니다. 기존 계정은 Supabase에서 역할을 수정하거나 다시 가입하세요.",
   authActionsLabel: "계정 작업",
+  logoutButton: "로그아웃",
   loginWarning: "Supabase Auth로 실제 로그인합니다. 이메일 인증을 켠 경우 가입 후 먼저 메일을 확인하세요.",
   loginUserLabel: "로그인 사용자",
   notLoggedIn: "로그인 전",
@@ -1071,6 +1075,7 @@ Object.assign(translations.ko, {
   saleTransactionMeta: "{count}건 · {period}",
   unnamedRealListing: "이름 없는 매물",
   realSource: "실제 출처",
+  ownListingDatabase: "로컬 매물 샘플",
   priceCheckNeeded: "가격 확인 필요",
   realMonthlyRent: "월세 {rent}만",
   realDeposit: "보증금 {deposit}만",
@@ -1391,6 +1396,8 @@ function applyStaticLanguage() {
   if (elements.signupRoleHint) elements.signupRoleHint.textContent = text("signupRoleHint");
   setButtonLabel('#loginForm button[type="submit"]', text("loginSubmit"));
   setButtonLabel(elements.signupButton, text("signupSubmit"));
+  setButtonLabel(elements.logoutButton, text("logoutButton"));
+  setButtonLabel(elements.switchRole, text("switchRole"));
   document.querySelector(".demo-login-grid")?.setAttribute("aria-label", text("authActionsLabel"));
   setText(".login-warning", text("loginWarning"));
   setText(".login-session span", text("loginUserLabel"));
@@ -1575,6 +1582,8 @@ function setLanguage(lang) {
   rebuildCommunityListings();
   renderBookingOptions();
   renderListings();
+  renderCurrentRealSearchResults();
+  renderInitialRealSearchMessage();
   renderGuides();
   renderRoleUI();
   setActiveView(state.activeView);
@@ -1687,7 +1696,7 @@ async function renderSuwonSurveySummary() {
     setText("#visibleCount + p", text("localListingSamples"));
     elements.pendingCount.textContent = rentMarket?.monthlyCount ? Number(rentMarket.monthlyCount).toLocaleString("ko-KR") : "0";
     setText("#pendingCount + p", text("monthlyRentSamples"));
-    elements.confirmedCount.textContent = rentMarket?.medianMonthlyRent ? `${rentMarket.medianMonthlyRent}万` : "-";
+    elements.confirmedCount.textContent = rentMarket?.medianMonthlyRent ? formatWan(rentMarket.medianMonthlyRent) : "-";
     setText("#confirmedCount + p", text("medianMonthlyRent"));
     elements.completedCount.textContent = safety?.safetyScore !== undefined ? `${safety.safetyScore}/100` : "-";
     setText("#completedCount + p", text("safetyReferenceScore"));
@@ -3131,8 +3140,9 @@ function getRealSearchParams() {
   const room = elements.realRoomInput.value || "all";
   const fallbackQuery = schoolMapQueries[state.school] || schoolMapQueries.all;
   const query = [area, place, room !== "all" ? realRoomLabels[room] : "", "월세"].filter(Boolean).join(" ") || fallbackQuery;
+  const includeAllLocalSamples = suwonSurveyMode.enabled && selectedArea === suwonSurveyMode.areaSelect;
 
-  return { area, selectedArea, typedArea, place, maxRent, room, query };
+  return { area, selectedArea, typedArea, place, maxRent, room, query, includeAllLocalSamples };
 }
 
 function buildRealSearchUrl(params) {
@@ -3152,6 +3162,51 @@ function normalizeRealListings(payload) {
   if (Array.isArray(payload?.listings)) return payload.listings;
   if (Array.isArray(payload?.items)) return payload.items;
   return [];
+}
+
+function getRealListingIdentity(item) {
+  return [
+    item.id,
+    item.title || item.name,
+    item.address || item.location || item.area,
+    item.monthlyRent ?? item.rent ?? item.price
+  ]
+    .filter(Boolean)
+    .join("|")
+    .toLowerCase();
+}
+
+function mergeRealListingResults(localListings, apiListings) {
+  const seen = new Set();
+  return [...localListings, ...apiListings].filter((item) => {
+    const identity = getRealListingIdentity(item);
+    if (!identity) return true;
+    if (seen.has(identity)) return false;
+    seen.add(identity);
+    return true;
+  });
+}
+
+function formatRealSourceName(value) {
+  const source = String(value || "").trim();
+  if (!source) return text("realSource");
+  if (source.toLowerCase() === "own listing database") return text("ownListingDatabase");
+  return source;
+}
+
+function renderCurrentRealSearchResults() {
+  if (!currentRealSearchResults.length || !elements.realResults) return;
+  elements.realSearchStatus.textContent = text("realSearchCount", { count: currentRealSearchResults.length });
+  elements.realResults.innerHTML = currentRealSearchResults.map(renderRealListingCard).join("");
+  refreshIcons();
+}
+
+function renderInitialRealSearchMessage() {
+  if (!elements.realResults || currentRealSearchResults.length) return;
+  elements.realResults.innerHTML =
+    location.protocol === "file:"
+      ? `<div class="empty-state">${text("realInitialFile")}</div>`
+      : `<div class="empty-state">${text("realInitialHttp")}</div>`;
 }
 
 async function fetchJson(path) {
@@ -3249,8 +3304,8 @@ async function searchStaticListings(params) {
   const datasets = { crimeRisk, marketRent, marketSale };
   return listingsData
     .filter((listing) => matchesStaticArea(listing, params))
-    .filter((listing) => !params.room || params.room === "all" || listing.room === params.room)
-    .filter((listing) => !params.maxRent || Number(listing.monthlyRent || 0) <= Number(params.maxRent))
+    .filter((listing) => params.includeAllLocalSamples || !params.room || params.room === "all" || listing.room === params.room)
+    .filter((listing) => params.includeAllLocalSamples || !params.maxRent || Number(listing.monthlyRent || 0) <= Number(params.maxRent))
     .map((listing) => enrichStaticListing(listing, datasets))
     .sort((a, b) => Number(b.verified) - Number(a.verified) || Number(a.monthlyRent) - Number(b.monthlyRent));
 }
@@ -3314,7 +3369,7 @@ function renderListingInsights(item) {
 
 function renderRealListingCard(item) {
   const title = escapeHtml(item.title || item.name || text("unnamedRealListing"));
-  const source = escapeHtml(item.sourceName || item.source || text("realSource"));
+  const source = escapeHtml(formatRealSourceName(item.sourceName || item.source));
   const address = escapeHtml(item.address || item.location || item.area || "");
   const roomType = escapeHtml(item.roomType || item.room || "");
   const rent = item.monthlyRent ?? item.rent ?? item.price ?? "";
@@ -3400,27 +3455,34 @@ async function searchRealListings() {
   elements.realResults.innerHTML = `<div class="empty-state">${text("realSearchReading")}</div>`;
 
   try {
+    const localListings = await searchStaticListings(params).catch((error) => {
+      console.warn("Failed to load local listing samples", error);
+      return [];
+    });
     let listingsFromApi = [];
+    let apiError = null;
     try {
       const response = await fetch(buildRealSearchUrl(params), {
         headers: { Accept: "application/json", ...(await getAuthHeaders()) }
       });
       if (!response.ok) throw new Error(`接口返回 ${response.status}`);
       listingsFromApi = normalizeRealListings(await response.json());
-    } catch (apiError) {
-      listingsFromApi = await searchStaticListings(params);
+    } catch (error) {
+      apiError = error;
     }
+    const mergedListings = mergeRealListingResults(localListings, listingsFromApi);
 
-    if (listingsFromApi.length === 0) {
+    if (mergedListings.length === 0) {
+      currentRealSearchResults = [];
       elements.realSearchStatus.textContent = text("realSearchNoResultsStatus");
       elements.realResults.innerHTML = `<div class="empty-state">${text("realSearchNoResults")}</div>`;
       return;
     }
 
-    elements.realSearchStatus.textContent = text("realSearchCount", { count: listingsFromApi.length });
-    elements.realResults.innerHTML = listingsFromApi.map(renderRealListingCard).join("");
-    refreshIcons();
+    currentRealSearchResults = mergedListings;
+    renderCurrentRealSearchResults();
   } catch (error) {
+    currentRealSearchResults = [];
     renderRealSearchFallback(params, error.message);
   }
 }
@@ -3738,12 +3800,9 @@ if (!authEnabled) {
   initializeSupabaseAuth();
 }
 setTimeout(() => {
-  elements.realResults.innerHTML =
-    location.protocol === "file:"
-      ? `<div class="empty-state">${text("realInitialFile")}</div>`
-      : `<div class="empty-state">${text("realInitialHttp")}</div>`;
+  renderInitialRealSearchMessage();
 }, 0);
-elements.realResults.innerHTML = `<div class="empty-state">${text("realInitialDefault")}</div>`;
+renderInitialRealSearchMessage();
 setTimeout(() => {
   applySuwonSurveyMode({ autoSearch: true });
 }, 50);
