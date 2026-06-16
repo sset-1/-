@@ -49,6 +49,8 @@ Login alone only identifies the user. To make booking/viewing requests visible a
 
 After that, new viewing requests are saved to Supabase `public.bookings` instead of only this browser's `localStorage`.
 
+If the app says `permission denied for table bookings`, run the latest `SUPABASE_BOOKINGS.sql` again. The script grants `select`, `insert`, and `update` privileges to Supabase's authenticated role, then RLS decides which rows each user can see.
+
 Student accounts can read their own requests. Agent accounts can read all requests when their user metadata contains:
 
 ```json

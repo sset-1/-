@@ -690,7 +690,10 @@ Object.assign(translations.zh, {
   bookingCloudSyncing: "正在同步到云端...",
   bookingCloudSaved: "{name}，预约已保存到 Supabase。其他设备登录后也能看到。",
   bookingCloudSaveFailed: "预约已暂存在本机，但云端同步失败。请先在 Supabase 运行 SUPABASE_BOOKINGS.sql。",
+  bookingCloudSaveFailedDetail: "预约已暂存在本机，但没有写入 Supabase：{error}",
   bookingCloudLoadFailed: "云端预约读取失败，暂时显示本机缓存。",
+  bookingCloudLoadFailedDetail: "云端预约读取失败：{error}",
+  bookingCloudNoSession: "没有检测到 Supabase 登录态，请退出后重新登录再提交。",
   bookingCloudUpdateFailed: "云端更新失败，请检查 Supabase bookings 表和权限规则。",
   wanUnit: "万",
   perMonthShort: "月",
@@ -826,7 +829,10 @@ Object.assign(translations.ko, {
   bookingCloudSyncing: "클라우드에 동기화하는 중...",
   bookingCloudSaved: "{name}님의 예약이 Supabase에 저장되었습니다. 다른 기기에서도 로그인 후 볼 수 있습니다.",
   bookingCloudSaveFailed: "예약은 이 기기에 임시 저장되었지만 클라우드 동기화에 실패했습니다. Supabase에서 SUPABASE_BOOKINGS.sql을 먼저 실행하세요.",
+  bookingCloudSaveFailedDetail: "예약은 이 기기에 임시 저장되었지만 Supabase에는 쓰지 못했습니다: {error}",
   bookingCloudLoadFailed: "클라우드 예약을 불러오지 못해 이 기기의 캐시를 표시합니다.",
+  bookingCloudLoadFailedDetail: "클라우드 예약을 불러오지 못했습니다: {error}",
+  bookingCloudNoSession: "Supabase 로그인 세션이 없습니다. 로그아웃 후 다시 로그인하고 제출하세요.",
   bookingCloudUpdateFailed: "클라우드 업데이트에 실패했습니다. Supabase bookings 테이블과 권한 규칙을 확인하세요.",
   wanUnit: "만",
   perMonthShort: "월",
@@ -1073,6 +1079,12 @@ function text(key, params = {}) {
   const value = translations[state.lang]?.[key] ?? translations.zh[key] ?? key;
   if (typeof value !== "string") return value;
   return value.replace(/\{(\w+)\}/g, (_, name) => params[name] ?? "");
+}
+
+function formatCloudError(error) {
+  if (!error) return text("bookingCloudSaveFailed");
+  if (typeof error === "string") return error;
+  return [error.code, error.message, error.details, error.hint].filter(Boolean).join(" | ") || String(error);
 }
 
 function localizedListing(listing, field) {
@@ -1841,6 +1853,12 @@ function canUseRemoteBookings() {
   return Boolean(authEnabled && supabaseClient && state.currentUser?.id);
 }
 
+function getRemoteBookingsUnavailableError() {
+  if (!supabaseClient) return new Error(text("supabaseMissing"));
+  if (!state.currentUser?.id) return new Error(text("bookingCloudNoSession"));
+  return null;
+}
+
 function getLocalBookingsToMigrate(remoteIds) {
   if (state.role !== "seeker" || !state.currentUser?.id) return [];
   return state.bookings.filter((booking) => {
@@ -1862,7 +1880,9 @@ async function loadRemoteBookings() {
 
   if (error) {
     console.warn("Failed to load Supabase bookings", error);
-    if (elements.bookingResult) elements.bookingResult.textContent = text("bookingCloudLoadFailed");
+    if (elements.bookingResult) {
+      elements.bookingResult.textContent = text("bookingCloudLoadFailedDetail", { error: formatCloudError(error) });
+    }
     renderBookingDashboard();
     return;
   }
@@ -1894,7 +1914,8 @@ async function loadRemoteBookings() {
 }
 
 async function createRemoteBooking(booking) {
-  if (!canUseRemoteBookings()) return booking;
+  const unavailableError = getRemoteBookingsUnavailableError();
+  if (unavailableError) throw unavailableError;
 
   const { data, error } = await supabaseClient
     .from(supabaseBookingsTable)
@@ -3078,7 +3099,7 @@ function bindEvents() {
       elements.bookingResult.textContent = text("bookingCloudSaved", { name: data.name });
     } catch (error) {
       console.warn("Failed to create Supabase booking", error);
-      elements.bookingResult.textContent = text("bookingCloudSaveFailed");
+      elements.bookingResult.textContent = text("bookingCloudSaveFailedDetail", { error: formatCloudError(error) });
     }
   });
 }

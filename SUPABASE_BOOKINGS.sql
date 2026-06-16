@@ -35,6 +35,10 @@ create table if not exists public.agent_accounts (
 alter table public.bookings enable row level security;
 alter table public.agent_accounts enable row level security;
 
+grant usage on schema public to authenticated;
+grant select, insert, update on public.bookings to authenticated;
+grant select on public.agent_accounts to authenticated;
+
 drop policy if exists "bookings_insert_own" on public.bookings;
 drop policy if exists "bookings_select_own_or_agent" on public.bookings;
 drop policy if exists "bookings_update_own_or_agent" on public.bookings;
